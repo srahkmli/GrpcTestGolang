@@ -3,7 +3,7 @@ package service
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/srahkmli/grpcTest/model"
-	"github.com/srahkmli/grpcTest/repository"
+	"github.com/srahkmli/grpcTest/repository_contract"
 )
 
 type ProductImpl struct {

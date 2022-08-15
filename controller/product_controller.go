@@ -5,11 +5,11 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/srahkmli/grpcTest/model"
 	"github.com/srahkmli/grpcTest/pb"
-	"github.com/srahkmli/grpcTest/service"
+	"github.com/srahkmli/grpcTest/service_contract"
 )
 
 type ProductController struct {
-	service service.ProductService
+	service service_contract.ProductService
 }
 
 func (s *ProductController) SaveProduct(ctx context.Context, product *grpcTest.Product) (model.Product, error) {

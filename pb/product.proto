@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package pb;
+
+
+option go_package = "github.com/srahkmli/grpcTest";
+
+message Product {
+ string Name = 1;
+int32 Qty = 2;
+}
+message Empty {}
+
+message Point {
+string  Name= 1;
+}
+ service ProductShopping{
+  rpc SaveProduct(Product)returns(Empty ){}
+  rpc GetProduct( Point ) returns( Product){}
+ }

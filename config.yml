@@ -1,0 +1,92 @@
+##########################################################################
+#                                                                        #
+#                          Service Identity Part                         #
+#               For Further information, please check README             #
+#                                                                        #
+##########################################################################
+
+service:
+  name: "micro"
+  id: 105  # id is a number for this service and must be unique - If the problem is in choosing a number, for example with letters default number is 999
+  baseURL: "/v1/"
+  grpc:
+    host: "localhost"
+    port: ":8082"
+    protocol: tcp
+    tls: false
+  http:
+    host: "localhost"
+    port: ":8080"
+    requestTimeout: 32
+  router:
+    - method: /pb.Micro/SayHelloxx
+      description: "for say hello to my master!"
+      maxAllowedAnomaly: 50
+      middlewares:
+        - CheckSome
+        - checkSome
+        - middleware3
+    - method: /pb.Micro/SayHello
+      description: "for say hello to my master!"
+      maxAllowedAnomaly: 50
+      middlewares:
+        - CheckSome
+        - checkSome
+        - Middleware3
+    - method: /SayHello
+      description: "for say hello to my master!"
+      maxAllowedAnomaly: 50
+      middlewares:
+        - CheckSome
+        - checkSome
+        - middleware3
+##########################################################################
+#                                                                        #
+#                         Server Config Part                             #
+#       Please set the server parameters based on your own settings      #
+#                                                                        #
+##########################################################################
+
+redis:
+  username: ""
+  password: ""
+  db: 0
+  host: "localhost:6379"
+  logger: ""
+
+postgres:
+  username: "admin"
+  password: "password"
+  host: "localhost:5432"
+  schema: "micro"
+
+Nats:
+  username: ""
+  password: ""
+  encoder: "json"
+  auth: false
+  allowReconnect: true
+  maxReconnect: 50
+  reconnectWait: 5
+  timeout: 3
+  endpoints:
+    - "nats://localhost:4222"
+
+jwt:
+  secret: "xxxxxxxxxxxxx"
+
+Env: "dev"
+
+grpcservices:
+  ghafele:
+    url: "localhost:8382"
+  aggregator:
+    url: "localhost:8282"
+    apikey: "asdasd"
+  sms:
+    url: "192.168.70.15:30910"
+  passenger:
+    url: "localhost:8882"
+    apikey: "asdasd"
+
+  writer: 'testwriter'

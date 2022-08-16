@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"log"
 	"micro/app/server"
+	"micro/client/broker"
 	"micro/client/elk"
+	"micro/client/jtrace"
+	"micro/client/postgres"
+	"micro/client/redis"
 	"micro/pkg/logger"
 	"os"
 	"time"
@@ -34,9 +38,9 @@ func Start() {
 
 	for {
 		fxNew := fx.New(
-			//		fx.Provide(broker.NewNats),
-			//		fx.Provide(redis.NewRedis),
-			//		fx.Provide(postgres.NewPostgres),
+			fx.Provide(broker.NewNats),
+			fx.Provide(redis.NewRedis),
+			fx.Provide(postgres.NewPostgres),
 			fx.Provide(elk.NewLogStash),
 			service.Module,
 			repository.Module,
@@ -44,7 +48,7 @@ func Start() {
 			fx.Provide(server.New),
 			fx.Invoke(config.InitConfigs),
 			fx.Invoke(logger.InitGlobalLogger),
-			//		fx.Invoke(jtrace.InitGlobalTracer),
+			fx.Invoke(jtrace.InitGlobalTracer),
 			fx.Invoke(serve),
 		)
 		startCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

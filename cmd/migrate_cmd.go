@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"log"
+	"micro/client/elk"
 	"micro/client/postgres"
 	"micro/config"
 	"micro/pkg/logger"
@@ -23,6 +24,7 @@ var migrateCMD = cobra.Command{
 // migrate database with fake data
 func (c *command) Migrate(cmd *cobra.Command, args []string) {
 	fx.New(
+		fx.Provide(elk.NewLogStash),
 		fx.Provide(postgres.NewPostgres),
 		fx.Invoke(config.InitConfigs),
 		fx.Invoke(logger.InitGlobalLogger),

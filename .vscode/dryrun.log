@@ -1,3 +1,4 @@
+make --dry-run --always-make --keep-going --print-directory
 make: Entering directory '/home/srahkmli/Documents/780/testGrpc'
 make submodule
 make proto

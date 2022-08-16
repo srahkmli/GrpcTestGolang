@@ -24,16 +24,16 @@ type ProductRepository struct {
 type ProductRepositoryParams struct {
 	fx.In
 
-	// Nats  broker.NatsBroker
-	// Redis redis.Store
-	// DB    *pg.DB
+	Nats  broker.NatsBroker
+	Redis redis.Store
+	DB    *pg.DB
 }
 
 func NewProductRepository(params ProductRepositoryParams) repocontract.IProductRepository {
 	return &ProductRepository{
-		// nats:  params.Nats,
-		// redis: params.Redis,
-		// db:    params.DB,
+		nats:  params.Nats,
+		redis: params.Redis,
+		db:    params.DB,
 	}
 }
 

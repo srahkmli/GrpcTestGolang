@@ -16,7 +16,7 @@ service:
     tls: false
   http:
     host: "localhost"
-    port: ":8080"
+    port: ":8090"
     requestTimeout: 32
   router:
     - method: /pb.Micro/SayHelloxx
@@ -68,7 +68,7 @@ etcd:
 postgres:
   username: "admin"
   password: "password"
-  host: "localhostlocalhost:5432"
+  host: "localhost:5432"
   schema: "micro"
 
 Nats:
@@ -92,3 +92,4 @@ logstash:
 
 cors: "*"
 env: 3
+debug: true

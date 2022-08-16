@@ -4,18 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
-	"micro/api/pb/base"
-	"micro/api/pb/product"
-	"micro/app/server/middleware"
-	"micro/client/jtrace"
-	"micro/config"
-	controller "micro/controller/base"
-	controller2 "micro/controller/product"
-	"micro/controller/rest"
-	"net"
-	"net/http"
-
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
@@ -27,6 +15,17 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
+	"log"
+	"micro/api/pb/base"
+	"micro/api/pb/product"
+	"micro/app/server/middleware"
+	"micro/client/jtrace"
+	"micro/config"
+	controller "micro/controller/base"
+	controller2 "micro/controller/product"
+	"micro/controller/rest"
+	"net"
+	"net/http"
 )
 
 // Micro service
@@ -80,6 +79,7 @@ func (s *server) ListenAndServe() error {
 	go func() {
 		if err := s.gwServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			zap.L().Error("error serving gateway server")
+			log.Print(err)
 		}
 	}()
 	log.Printf("router connected ports[GRPC:%s,HTTP:%s] \n",
@@ -130,11 +130,13 @@ func (*server) DialOptions() []grpc.DialOption {
 func (*server) HandleFuncs(mux *http.ServeMux) {
 	mux.HandleFunc("/metrics", rest.M.Metrics)
 	mux.Handle("/health", http.HandlerFunc(rest.M.Health))
+
 }
 
 // with this method we can recover panics in service
 func panicRecover(ctx context.Context, p interface{}) error {
 	zap.L().Error(fmt.Sprintf("panic error: %v %v", ctx, p))
+
 	return fmt.Errorf("PANICED: %+v", p)
 }
 
@@ -149,12 +151,12 @@ func (s *server) GatewayServer(ctx context.Context, conn *grpc.ClientConn) (*htt
 	}))
 
 	// register handler
-	if err := base.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
+	//if err := base.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
+	//	return nil, err
+	//}
+	if err := product.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
 		return nil, err
 	}
-	//	if err := product.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
-	//		return nil, err
-	//	}
 
 	// handle methods
 	mux := http.NewServeMux()

@@ -17,7 +17,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/sample/{name}": {
+    "/v1/sample/add": {
       "post": {
         "operationId": "SampleAPI_SampleEndpoint",
         "responses": {
@@ -36,23 +36,11 @@
         },
         "parameters": [
           {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "qty": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              }
+              "$ref": "#/definitions/apiproductSampleRequest"
             }
           }
         ],
@@ -63,6 +51,18 @@
     }
   },
   "definitions": {
+    "apiproductSampleRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "qty": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "apiproductSampleResponse": {
       "type": "object",
       "properties": {

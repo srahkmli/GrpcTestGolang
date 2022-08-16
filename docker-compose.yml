@@ -28,7 +28,7 @@ services:
       - "1215:16686"
     networks:
       - backend
-      - frontend
+
 
   # -----------------------------
   # etcd servcie 0
@@ -63,7 +63,7 @@ services:
       - "true"
     networks:
       - backend
-      - frontend
+
 
   # -----------------------------
   # redis database
@@ -87,7 +87,7 @@ services:
       - "9251:8081"
     networks:
       - backend
-      - frontend
+
   
   # -----------------------------
   # nats message broker

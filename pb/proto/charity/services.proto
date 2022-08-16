@@ -1,0 +1,351 @@
+syntax = "proto3";
+
+package haf80.api.charity;
+
+option go_package = "charity/pb/proto/charity;charity";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/charity";
+};
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.charity.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.charity.Error) returns (haf80.api.charity.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.charity.CreateErrorRequest) returns (haf80.api.charity.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+
+  // Get all campaigns
+  rpc GetCampaign (google.protobuf.Empty) returns (haf80.api.charity.CampaignListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/charity/campaign"
+    };
+  }
+
+  // Get all categories
+  rpc GetCategory (google.protobuf.Empty) returns (haf80.api.charity.CategoryListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/charity/category"
+    };
+  }
+
+  // Get all stories
+  rpc GetStory (google.protobuf.Empty) returns (haf80.api.charity.StoryListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/charity/story"
+    };
+  }
+
+  // Get all medias
+  rpc GetMedia (google.protobuf.Empty) returns (haf80.api.charity.MediaListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/charity/media"
+    };
+  }
+
+  // update the campaign
+  rpc UpdateCampaign (haf80.api.charity.Campaign) returns (haf80.api.charity.UpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/charity/campaign/update"
+      body: "*"
+    };
+  }
+  // update the category
+  rpc UpdateCategory (haf80.api.charity.Category) returns (haf80.api.charity.UpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/charity/category/update"
+      body: "*"
+    };
+  }
+  // update the story
+  rpc UpdateStory (haf80.api.charity.Story) returns (haf80.api.charity.UpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/charity/story/update"
+      body: "*"
+    };
+  }
+
+  // update the media
+  rpc UpdateMedia (haf80.api.charity.Media) returns (haf80.api.charity.UpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/charity/media/update"
+      body: "*"
+    };
+  }
+
+  // Create the campaign
+  rpc CreateCampaign (haf80.api.charity.Campaign) returns (haf80.api.charity.CreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/charity/campaign/create"
+      body: "*"
+    };
+  }
+
+  // Create the category
+  rpc CreateCategory (haf80.api.charity.Category) returns (haf80.api.charity.CreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/charity/category/create"
+      body: "*"
+    };
+  }
+
+  // Create the story
+  rpc CreateStory (haf80.api.charity.Story) returns (haf80.api.charity.CreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/charity/story/create"
+      body: "*"
+    };
+  }
+
+  // Create the media
+  rpc CreateMedia (haf80.api.charity.Media) returns (haf80.api.charity.CreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/charity/media/create"
+      body: "*"
+    };
+  }
+
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  string status = 6;
+  string type = 7;
+  string description = 8;
+}
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string type = 6;
+  string status = 7;
+  string description = 8;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+
+message Campaign{
+  uint64 id = 1;
+  uint64 categoryId = 2;
+  string url = 3;
+  string title = 4;
+  string subtitle = 5;
+  string body = 6;
+  uint32 progress = 7;
+  uint32 donors = 8;
+  uint64 totalDonation = 9;
+  repeated string type = 10;
+  bool showProgress = 11;
+  bool showDonors = 12;
+  bool showTotalDonation = 13;
+  bool showDetails = 14;
+  string status = 15;
+  string provider = 16;
+  uint64 goal = 17;
+  uint32 priority = 18;
+}
+
+message CampaignListResponse{
+  repeated Campaign data = 1;
+}
+
+message Category{
+  uint64 id = 1;
+  string name = 2;
+  string status = 3;
+}
+message CategoryListResponse{
+  repeated  Category data = 1;
+}
+
+
+message Story{
+  uint64 id = 1;
+  uint64 campaignId = 2;
+  string url = 3;
+  string title = 4;
+  string subtitle = 5;
+  string status = 6;
+  uint32 priority = 7;
+}
+
+message StoryListResponse{
+  repeated Story data = 1;
+}
+
+
+message Media{
+  uint64 id = 1;
+  uint64 campaignId = 2;
+  enum media {
+    image = 0;
+    video = 1;
+    gif = 2;
+  }
+  media type = 3;
+  string url = 4;
+}
+
+message MediaListResponse{
+  repeated Media data = 1;
+}
+
+message UpdateResponse{
+  string message = 1;
+}
+
+message CreateResponse{
+  string message = 1;
+}
+
+
+// https://api-dev.780.ir/charity/v1/story
+service charity {
+  //get all the stories
+  rpc GetStory (google.protobuf.Empty) returns (haf80.api.charity.StoryResponse){
+    option (google.api.http) = {
+      get: "/v1/story"
+    };
+  }
+  //get all the categories
+  rpc GetCategory (google.protobuf.Empty) returns (haf80.api.charity.CategoryResponse){
+    option (google.api.http) = {
+      get: "/v1/category"
+    };
+  }
+ //get all the campaigns
+  rpc GetCampaign (google.protobuf.Empty) returns (haf80.api.charity.CampaignResponse){
+    option (google.api.http) = {
+          get: "/v1/campaign"
+    };
+  }
+  //get all the medias
+  rpc GetMedia (haf80.api.charity.MediaRequest) returns (haf80.api.charity.MediaResponse){
+    option (google.api.http) = {
+      get: "/v1/campaign/media"
+    };
+  }
+  //new an order
+  rpc Order (haf80.api.charity.OrderRequest) returns (haf80.api.charity.OrderResponse){
+    option (google.api.http) = {
+      post: "/v1/campaign/order",
+      body: "*"
+    };
+  }
+}
+
+message StoryResponse{
+  message Story {
+    uint64 campaignId = 1;
+    string url = 2;
+    string title = 3;
+    string subtitle = 4;
+    uint32 priority = 5;
+  }
+  repeated Story data = 1;
+}
+
+message CategoryResponse{
+  message Category {
+    uint64 id = 1;
+    string name = 2;
+  }
+  repeated Category data = 1;
+}
+
+message CampaignResponse{
+  message Campaign {
+    uint64 id = 1;
+    uint64 categoryId = 2;
+    string url = 3;
+    string title = 4;
+    string subtitle = 5;
+    string body = 6;
+    uint32 progress = 7;
+    uint32 donors = 8;
+    uint64 totalDonation = 9;
+    repeated string type = 10;
+    bool showProgress = 11;
+    bool showDonors = 12;
+    bool showTotalDonation = 13;
+    bool showDetails = 14;
+    uint32 priority = 15;
+  }
+  uint32 serviceId = 1;
+  repeated Campaign data = 2;
+}
+
+message MediaRequest{
+  uint64 id = 1;
+}
+
+
+
+message MediaResponse{
+  message Media {
+    enum media {
+      image = 0;
+      video = 1;
+      gif = 2;
+    }
+    media type = 1;
+    string url = 2;
+  }
+  repeated Media data = 1;
+}
+
+message OrderRequest{
+  enum PaymentTypeEnum {
+    wallet = 0;
+    direct = 1;
+  }
+  uint64 campaignId = 1;
+  uint32 price = 2;
+  string type = 3;
+  PaymentTypeEnum paymentType = 4;
+}
+
+message OrderResponse{
+  string orderId = 1;
+  uint32 serviceId = 2;
+  uint32 price = 3;
+}

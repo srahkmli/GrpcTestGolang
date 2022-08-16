@@ -1,0 +1,515 @@
+syntax = "proto3";
+
+package haf80.api.bill;
+
+option go_package = "micro/pb/proto/bill;bill";
+
+// import "google/api/httpbody.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/api/field_behavior.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/bill";
+  security_definitions: {
+    security: {
+      key: "bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+        description: "Authentication token, prefixed by Bearer: Bearer <token>"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "bearer"
+    }
+  }
+};
+
+// Admin panel services
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.bill.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.bill.Error) returns (haf80.api.bill.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.bill.CreateErrorRequest) returns (haf80.api.bill.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+}
+
+// App Services (Categories)
+service Service {
+  // Get the all errors
+  rpc Get (google.protobuf.Empty) returns (haf80.api.bill.ServicesResponse) {
+    option (google.api.http) = {
+      get: "/v1/services"
+    };
+  }
+  // Get the all errors
+  rpc NewOrder (haf80.api.bill.RawOrderRequest) returns (haf80.api.bill.NewOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/services/order"
+      body: "*"
+    };
+  }
+}
+
+// Service Gas
+service Gas {
+  // Inquiry get inquiry of gas bill
+  rpc Inquiry (haf80.api.bill.InquiryBillPayRequest) returns (haf80.api.bill.InquiryBillPayResponse){
+    option (google.api.http) = {
+      post: "/v1/gas/inquiry"
+      body: "*"
+    };
+  }
+
+  // NewOrder create an order for gas
+  rpc NewOrder (haf80.api.bill.NewOrderBillPayRequest) returns (haf80.api.bill.NewOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/gas/order"
+      body: "*"
+    };
+  }
+
+  // complete service order
+  rpc CompleteOrder (haf80.api.bill.CompleteOrderRequest) returns (haf80.api.bill.CompleteOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/gas/complete-order"
+      body: "*"
+    };
+  }
+}
+
+// Service Water
+service Water {
+  // Inquiry get inquiry of gas bill
+  rpc Inquiry (haf80.api.bill.InquiryBillPayRequest) returns (haf80.api.bill.InquiryBillPayResponse){
+    option (google.api.http) = {
+      post: "/v1/water/inquiry"
+      body: "*"
+    };
+  }
+  // create an order
+  rpc NewOrder (haf80.api.bill.NewOrderBillPayRequest) returns (haf80.api.bill.NewOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/water/order"
+      body: "*"
+    };
+  }
+
+  // complete service order
+  rpc CompleteOrder (haf80.api.bill.CompleteOrderRequest) returns (haf80.api.bill.CompleteOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/water/complete-order"
+      body: "*"
+    };
+  }
+}
+
+// Service Phone
+service Phone {
+  // Inquiry get inquiry of gas bill
+  rpc Inquiry (haf80.api.bill.InquiryPhoneRequest) returns (haf80.api.bill.InquiryPhoneResponse){
+    option (google.api.http) = {
+      post: "/v1/mobile/inquiry"
+      body: "*"
+    };
+  }
+  // create an order
+  rpc NewOrder (haf80.api.bill.NewOrderPhoneRequest) returns (haf80.api.bill.NewOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/mobile/order"
+      body: "*"
+    };
+  }
+
+  // complete service order
+  rpc CompleteOrder (haf80.api.bill.CompleteOrderRequest) returns (haf80.api.bill.CompleteOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/mobile/complete-order"
+      body: "*"
+    };
+  }
+}
+
+// Service Tel
+service Tel {
+  // Inquiry get inquiry of gas bill
+  rpc Inquiry (haf80.api.bill.InquiryTelRequest) returns (haf80.api.bill.InquiryPhoneResponse){
+    option (google.api.http) = {
+      post: "/v1/tel/inquiry"
+      body: "*"
+    };
+  }
+
+  // create an order
+  rpc NewOrder (haf80.api.bill.NewOrderTelRequest) returns (haf80.api.bill.NewOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/tel/order"
+      body: "*"
+    };
+  }
+
+  // complete service order
+  rpc CompleteOrder (haf80.api.bill.CompleteOrderRequest) returns (haf80.api.bill.CompleteOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/tel/complete-order"
+      body: "*"
+    };
+  }
+}
+
+// Service Electricity
+service Electricity {
+  // Inquiry get inquiry with full detail
+  rpc Inquiry (haf80.api.bill.InquiryBillPayRequest) returns (haf80.api.bill.InquiryElectricityResponse){
+    option (google.api.http) = {
+      post: "/v1/electricity/inquiry"
+      body: "*"
+    };
+  }
+
+  // get inquiry document base64
+  rpc InquiryDocument (haf80.api.bill.InquiryBillPayRequest) returns (haf80.api.bill.InquiryElectricityDocumentResponse){
+    option (google.api.http) = {
+      post: "/v1/electricity/inquiry/document"
+      body: "*"
+    };
+  }
+
+  // create an order
+  rpc NewOrder (haf80.api.bill.NewOrderBillPayRequest) returns (haf80.api.bill.NewOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/electricity/order"
+      body: "*"
+    };
+  }
+
+  // complete service order
+  rpc CompleteOrder (haf80.api.bill.CompleteOrderRequest) returns (haf80.api.bill.CompleteOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/electricity/complete-order"
+      body: "*"
+    };
+  }
+}
+
+// Service Mybill
+service MyBills {
+  // GetAll get all bills
+  rpc GetAll (google.protobuf.Empty) returns (haf80.api.bill.BillsResponse){
+    option (google.api.http) = {
+      get: "/v1/mybill"
+    };
+  }
+  // Insert new bill
+  rpc Insert (haf80.api.bill.InsertBillRequest) returns (haf80.api.bill.BillResponse){
+    option (google.api.http) = {
+      post: "/v1/mybill"
+      body: "*"
+    };
+  }
+  // Update a bill
+  rpc Update (haf80.api.bill.UpdateBillRequest) returns (haf80.api.bill.BillActionResponse){
+    option (google.api.http) = {
+      patch: "/v1/mybill/{id}"
+      body: "*"
+    };
+  }
+  // Delete a bill
+  rpc Delete (haf80.api.bill.DeleteBillRequest) returns (haf80.api.bill.BillActionResponse){
+    option (google.api.http) = {
+      delete: "/v1/mybill/{id}"
+    };
+  }
+  // Inquiry my bill
+  rpc Inquiry (haf80.api.bill.MyBillInquiryRequest) returns (haf80.api.bill.MyBillInquiry){
+    option (google.api.http) = {
+      post: "/v1/mybill/inquiry"
+      body: "*"
+    };
+  }
+  // Pay my bill
+  rpc NewOrder (haf80.api.bill.MyBillPayRequest) returns (haf80.api.bill.NewOrderResponse){
+    option (google.api.http) = {
+      post: "/v1/mybill/order"
+      body: "*"
+    };
+  }
+}
+
+message RawOrderRequest {
+  enum BillType {
+    gas = 0;
+    water= 1;
+    tel = 2;
+    mobile = 3;
+    electricity = 4;
+  }
+  enum PaymentTypeEnum {
+    wallet = 0;
+    direct = 1;
+  }
+  string billId = 1 [(google.api.field_behavior) = REQUIRED];
+  string payId = 2 [(google.api.field_behavior) = REQUIRED];
+  BillType type = 3 [(google.api.field_behavior) = REQUIRED];
+  PaymentTypeEnum paymentType = 4 [(google.api.field_behavior) = REQUIRED];
+}
+
+message InsertBillRequest {
+  enum TypeEnum {
+    gas = 0;
+    water= 1;
+    tel = 2;
+    mobile = 3;
+    electricity = 4;
+  }
+  string billId = 1 [(google.api.field_behavior) = REQUIRED];
+  string name = 2 [(google.api.field_behavior) = REQUIRED];
+  TypeEnum type = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message BillResponse {
+  enum TypeEnum {
+    gas = 0;
+    water= 1;
+    tel = 2;
+    mobile = 3;
+    electricity = 4;
+  }
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  string name = 2 [(google.api.field_behavior) = REQUIRED];
+  TypeEnum type = 3 [(google.api.field_behavior) = REQUIRED];
+  string lastOrderDate = 4 [(google.api.field_behavior) = REQUIRED];
+  string billId = 5 [(google.api.field_behavior) = REQUIRED];
+}
+
+message MyBillInquiry {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  string billId = 2 [(google.api.field_behavior) = REQUIRED];
+  string payId = 3 [(google.api.field_behavior) = REQUIRED];
+  uint32 price = 4 [(google.api.field_behavior) = REQUIRED];
+  string paymentDeadline = 5 [(google.api.field_behavior) = REQUIRED];
+  uint32 midTermPrice = 6 [(google.api.field_behavior) = REQUIRED];
+}
+
+message MyBillInquiryRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message MyBillPayRequest {
+  enum PaymentTerms{
+    midTerm = 0;
+    fullTerm = 1;
+  }
+  enum PaymentTypeEnum {
+    wallet = 0;
+    direct = 1;
+  }
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  PaymentTerms type = 2 [(google.api.field_behavior) = REQUIRED];
+  PaymentTypeEnum paymentType = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message BillActionResponse {
+  string message = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message DeleteBillRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdateBillRequest {
+  string id = 1 [(google.api.field_behavior) = REQUIRED];
+  string name = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message BillsResponse {
+  int32 serviceId = 1 [(google.api.field_behavior) = REQUIRED];
+  repeated BillResponse data = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message InquiryElectricityResponse {
+  string payId = 1 [(google.api.field_behavior) = REQUIRED];
+  string billId =2 [(google.api.field_behavior) = REQUIRED];
+  uint32 price = 3 [(google.api.field_behavior) = REQUIRED];
+  string paymentDeadline = 4 [(google.api.field_behavior) = REQUIRED];
+  string phase = 5 [(google.api.field_behavior) = REQUIRED];
+  string companyName = 6 [(google.api.field_behavior) = REQUIRED];
+  string tariffType = 7 [(google.api.field_behavior) = REQUIRED];
+  string customerType = 8 [(google.api.field_behavior) = REQUIRED];
+  string serialNumber = 9 [(google.api.field_behavior) = REQUIRED];
+  string serviceAddress = 10 [(google.api.field_behavior) = REQUIRED];
+  string servicePostCode = 11 [(google.api.field_behavior) = REQUIRED];
+  string customerName = 12 [(google.api.field_behavior) = REQUIRED];
+}
+
+message InquiryElectricityDocumentResponse {
+  string extention = 1 [(google.api.field_behavior) = REQUIRED];
+  string document = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message InquiryBillPayRequest {
+  string billId = 1 [(google.api.field_behavior) = REQUIRED];
+  string payId = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message InquiryBillPayResponse {
+  uint32 price = 1 [(google.api.field_behavior) = REQUIRED];
+  string paymentDeadline = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message NewOrderBillPayRequest {
+  enum PaymentTypeEnum {
+    wallet = 0;
+    direct = 1;
+  }
+  string billId = 1 [(google.api.field_behavior) = REQUIRED];
+  string payId = 2 [(google.api.field_behavior) = REQUIRED];
+  PaymentTypeEnum paymentType = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message NewOrderResponse {
+  uint32 serviceId = 1 [(google.api.field_behavior) = REQUIRED];
+  string orderId = 2 [(google.api.field_behavior) = REQUIRED];
+  uint32 price = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message InquiryTelRequest {
+  string phone = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message InquiryPhoneRequest {
+  enum OperatorEnum {
+    mci = 0;
+    irancell = 1;
+    rightel = 2;
+  }
+  string phone = 1 [(google.api.field_behavior) = REQUIRED];
+  OperatorEnum operator = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message InquiryPhoneResponse {
+  message PhoneInquiry{
+    string billId = 1 [(google.api.field_behavior) = REQUIRED];
+    string payId = 2 [(google.api.field_behavior) = REQUIRED];
+    uint32 price = 3 [(google.api.field_behavior) = REQUIRED];
+    string paymentDeadline = 4 [(google.api.field_behavior) = REQUIRED];
+  }
+  PhoneInquiry midTerm = 1 [(google.api.field_behavior) = REQUIRED];
+  PhoneInquiry fullTerm = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message NewOrderTelRequest {
+  enum PaymentTerms {
+    midTerm = 0;
+    fullTerm = 1;
+  }
+  enum PaymentTypeEnum {
+    wallet = 0;
+    direct = 1;
+  }
+  string phone = 1 [(google.api.field_behavior) = REQUIRED];
+  PaymentTerms type = 2 [(google.api.field_behavior) = REQUIRED];
+  PaymentTypeEnum paymentType = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message NewOrderPhoneRequest {
+  enum PaymentTerms {
+    midTerm = 0;
+    fullTerm = 1;
+  }
+  enum OperatorEnum {
+    mci = 0;
+    irancell = 1;
+    rightel = 2;
+  }
+  enum PaymentTypeEnum {
+    wallet = 0;
+    direct = 1;
+  }
+  string phone = 1 [(google.api.field_behavior) = REQUIRED];
+  PaymentTerms type = 2 [(google.api.field_behavior) = REQUIRED];
+  OperatorEnum operator = 3 [(google.api.field_behavior) = REQUIRED];
+  PaymentTypeEnum paymentType = 4 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CompleteOrderRequest {
+  string orderId = 1 [(google.api.field_behavior) = REQUIRED];
+  uint32 price = 2 [(google.api.field_behavior) = REQUIRED];
+  string rrn = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CompleteOrderResponse {
+  string payId = 1 [(google.api.field_behavior) = REQUIRED];
+  string billId = 2 [(google.api.field_behavior) = REQUIRED];
+  string refId = 3 [(google.api.field_behavior) = REQUIRED];
+  string paiedAt = 4 [(google.api.field_behavior) = REQUIRED];
+  uint32 price = 5 [(google.api.field_behavior) = REQUIRED];
+}
+
+message ServicesResponse {
+  message Service {
+    string name = 1 [(google.api.field_behavior) = REQUIRED];
+    bool isActive = 2 [(google.api.field_behavior) = REQUIRED];
+    string tag = 3 [(google.api.field_behavior) = REQUIRED];
+    string type = 4 [(google.api.field_behavior) = REQUIRED];
+  }
+
+  int32 serviceId = 1 [(google.api.field_behavior) = REQUIRED];
+  repeated Service services = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+message Error {
+  int32  id = 1 [(google.api.field_behavior) = REQUIRED];
+  string message = 2 [(google.api.field_behavior) = REQUIRED];
+  string lang = 3 [(google.api.field_behavior) = REQUIRED];
+  uint32 httpCode = 4 [(google.api.field_behavior) = REQUIRED];
+  int32  code = 5 [(google.api.field_behavior) = REQUIRED];
+  uint32 serviceCode = 6 [(google.api.field_behavior) = REQUIRED];
+  string status = 7 [(google.api.field_behavior) = REQUIRED];
+  string description = 8 [(google.api.field_behavior) = REQUIRED];
+}
+
+message CreateErrorRequest {
+  string message = 1 [(google.api.field_behavior) = REQUIRED];
+  string lang = 2 [(google.api.field_behavior) = REQUIRED];
+  uint32 httpCode = 3 [(google.api.field_behavior) = REQUIRED];
+  int32  code = 4 [(google.api.field_behavior) = REQUIRED];
+  uint32 serviceCode = 5 [(google.api.field_behavior) = REQUIRED];
+  string status = 6 [(google.api.field_behavior) = REQUIRED];
+  string description = 7 [(google.api.field_behavior) = REQUIRED];
+}
+
+message ErrorListResponse {
+  uint32 code = 1 [(google.api.field_behavior) = REQUIRED];
+  string message = 2 [(google.api.field_behavior) = REQUIRED];
+  repeated Error data = 3 [(google.api.field_behavior) = REQUIRED];
+}
+message ErrorUpdateResponse {
+  uint32 code = 1 [(google.api.field_behavior) = REQUIRED];
+  string message = 2 [(google.api.field_behavior) = REQUIRED];
+}
+message ErrorCreateResponse{
+  uint32 code = 1 [(google.api.field_behavior) = REQUIRED];
+  string message = 2 [(google.api.field_behavior) = REQUIRED];
+}

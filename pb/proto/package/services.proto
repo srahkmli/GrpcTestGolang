@@ -1,0 +1,308 @@
+syntax = "proto3";
+
+package haf80.api.epackage;
+
+option go_package = "micro/pb/proto/epackage;epackage";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/package";
+  security_definitions: {
+    security: {
+      key: "bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+        description: "Authentication token, prefixed by Bearer: Bearer <token>"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "bearer"
+    }
+  }
+};
+
+
+service Product{
+  // get service and return types for this service
+  rpc Type (haf80.api.epackage.TypeRequest) returns (haf80.api.epackage.TypeResponse) {
+    option (google.api.http) = {
+      get: "/v1/product/type"
+    };
+  }
+  // get service and return packages for this service
+  rpc Package (haf80.api.epackage.PackageRequest) returns (haf80.api.epackage.PackageResponse) {
+    option (google.api.http) = {
+      get: "/v1/product/package"
+    };
+  }
+  // initial an order
+  rpc InitialOrder (haf80.api.epackage.InitialOrderRequest) returns (haf80.api.epackage.InitialOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/product/order"
+      body: "*"
+    };
+  }
+}
+
+service Contacts {
+
+  // add new contact
+  rpc Create (haf80.api.epackage.ContactCreateRequest) returns (haf80.api.epackage.ContactSuccessCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/contacts"
+      body: "*"
+    };
+  }
+
+  // get users all contacts
+  rpc List (google.protobuf.Empty) returns (haf80.api.epackage.ContactResponse) {
+    option (google.api.http) = {
+      get: "/v1/contacts"
+    };
+  }
+
+  // update a contact
+  rpc Update (haf80.api.epackage.ContactUpdateRequest) returns (haf80.api.epackage.ContactSuccessResponse) {
+    option (google.api.http) = {
+      patch: "/v1/contacts/{id}"
+      body: "*"
+    };
+  }
+
+  // delete a contact
+  rpc Delete (haf80.api.epackage.ContactActionRequest) returns (haf80.api.epackage.ContactSuccessResponse) {
+    option (google.api.http) = {
+      delete: "/v1/contacts/{contactId}"
+    };
+  }
+}
+
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.epackage.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.epackage.Error) returns (haf80.api.epackage.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.epackage.CreateErrorRequest) returns (haf80.api.epackage.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+}
+
+service Helper {
+  rpc GetRecentlyOrdersPackages(haf80.api.epackage.RecentlyOrdersRequest) returns (haf80.api.epackage.RecentlyOrdersResponse) {
+    option (google.api.http) = {
+      get: "/v1/helper/get-recently-orders"
+    };
+  }
+}
+
+
+message ContactActionRequest {
+  string contactId = 1;
+}
+
+message ContactActionPinRequest {
+  string contactId = 1;
+  bool isPined = 2;
+}
+
+message RecentlyOrdersRequest {
+  string contactId = 1;
+}
+
+message RecentlyOrdersResponse {
+  message RecentOrder {
+    string id = 1;
+    string model = 2;
+    uint32 modelId = 3;
+  }
+  repeated RecentOrder data = 2;
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  uint32 serviceCode = 6;
+  string status = 7;
+}
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string status = 6;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+message ContactUpdateRequest {
+  string id = 1;
+  string name = 2;
+  string phone = 3;
+  Service.serviceEnum service = 4;
+  uint32 packageId = 5; 
+  Sim.simEnum sim = 6;
+  google.protobuf.BoolValue isPined = 7;
+}
+
+message ContactCreateRequest {
+  string name = 1;
+  string phone = 2;
+  Service.serviceEnum service = 3;
+  uint32 packageId = 4; 
+  Sim.simEnum sim = 5;
+  bool isPined = 6;
+}
+
+message ContactResponse {
+  message Phone {
+    string id = 1;
+    string phone = 2;
+    string service = 3;
+    string name = 4;
+    string sim = 5;
+    bool isPined = 6;
+  }
+  repeated Phone data = 2;
+}
+
+message ContactSuccessResponse {
+  string message = 1;
+}
+
+message ContactSuccessCreateResponse {
+  message Phone {
+    string id = 1;
+    string phone = 2;
+    string service = 3;
+    string name = 4;
+    string sim = 5;
+    bool isPined = 6;
+  }
+  string message = 1;
+  Phone data = 2;
+}
+
+message TypeRequest {
+  Service.serviceEnum service = 1;
+  Sim.simEnum sim = 2;
+}
+
+message TypeResponse {
+  message Method {
+    message Type {
+      int32 id = 1;
+      string name = 2;
+      string type = 3;
+    }
+    string method = 1;
+    string method_name = 2;
+    repeated Type types = 3;
+    uint32 order = 4;
+  }
+  repeated Method data = 2;
+}
+
+message Service {
+  enum serviceEnum {
+    unknown = 0;
+    irancell = 1;
+    mci = 2;
+    rightel = 3;
+    shatel = 4;
+  };
+}
+
+message Sim {
+  enum simEnum {
+    unknown = 0;
+    prepaid = 1;
+    postpaid = 2;
+    data = 3;
+  };
+}
+
+message PackageRequest{
+  Service.serviceEnum service = 1;
+  Sim.simEnum sim = 2;
+}
+
+message PackageResponse{
+  uint32 serviceId = 1;
+  message Package {
+    uint32 id = 1;
+    string internetDescription = 2;
+    string callDescription = 3;
+    string smsDescription = 4;
+    repeated string tags = 5;
+    uint32 price = 6;
+    uint32 finalPrice = 7;
+    uint32 typeId = 8;
+    string typeName = 9;
+  }
+  repeated Package data = 2;
+}
+
+message InitialOrderRequest {
+  string phone = 1;
+  uint32 packageId = 2;
+  Service.serviceEnum service = 3;
+  Sim.simEnum sim = 4;
+  string paymentType = 5;
+}
+
+message InitialOrderResponse {
+  uint32 serviceId = 1;
+  string orderId = 2;
+  uint32 price = 3;
+}
+
+message EpackageOrderRequest {
+  string order = 1; // generated token by epackage service
+  uint32 price = 2; // order price
+  string rrn = 3;   // bank rrn
+}
+message EpackageOrderResponse {
+  string message = 2;
+  string tid = 3;
+  string data = 4;
+}

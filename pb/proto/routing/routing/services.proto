@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package haf80.api.ghafele.flight;
+
+option go_package = "ghafele/api/pb/ghafele/flight;flight";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/routing";
+};
+
+service Routing {
+  rpc GetCountries (google.protobuf.Empty) returns (CountryResponse) {
+    option (google.api.http) = {
+      get:"/v1/countries"
+    };
+  }
+
+  rpc GetCities (CityRequest) returns (CityResponse) {
+    option (google.api.http) = {
+      get:"/v1/countries/{CountyName}/cities"
+    };
+  }
+
+}
+
+message CountryResponse {
+  int32 code = 1;
+  repeated Countries data = 2;
+}
+
+message Countries {
+  string Name = 1;
+  string NameFa = 2;
+}
+
+message CityRequest {
+  string CountyName = 1;
+}
+
+message CityResponse {
+  int32 code = 1;
+  repeated Cities data = 2;
+}
+
+message Cities {
+  string Name = 1;
+  string NameFa = 2;
+}

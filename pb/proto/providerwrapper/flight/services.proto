@@ -1,0 +1,174 @@
+syntax = "proto3";
+
+package haf80.api.providerwrapper.flight;
+
+option go_package = "providerwrapper/api/pb/providerwrapper/flight;flight";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/providerwrapper";
+};
+
+
+service Flight {
+
+
+  rpc ReserveFlight (FlightReserveRequest) returns (FlightReserveResponse) {
+    option (google.api.http) = {
+      post:"/v1/flight/reserve"
+      body:"*"
+    };
+  }
+
+}
+
+message FlightReserveRequest {
+  string RequestId = 1;
+  string TicketId = 2;
+}
+
+message FlightReserveResponse {
+  message Payment {
+    float Price = 1;
+    int32 Currency = 2;
+    float Discount = 3;
+    float Point = 4;
+    float Tax = 5;
+  }
+
+  message Tarrif {
+    int32 ID = 1;
+    string Name = 2;
+    bool IsSelectable = 3;
+    bool RequireUserConfirm = 4;
+    Payment Payment = 5;
+  }
+
+  message Fares {
+    int32 PersonType = 1;
+    repeated Tarrif Tarrif = 2;
+  }
+
+  message Departure {
+    string Code = 1;
+    string Name = 2;
+    string DateTime = 3;
+    string UTCDateTime = 4;
+    string Terminal = 5;
+    string City = 6;
+    string CityCode = 7;
+    string Iata = 8;
+    uint32 Lat = 9;
+    uint32 Lon = 10;
+  }
+
+  message Arrival {
+    string Code = 1;
+    string Name = 2;
+    string DateTime = 3;
+    string UTCDateTime = 4;
+    string Terminal = 5;
+    string City = 6;
+    string CityCode = 7;
+    string Iata = 8;
+    uint32 Lat = 9;
+    uint32 Lon = 10;
+  }
+
+  message TripInfo {
+    Departure Departure = 1;
+    Arrival Arrival = 2;
+  }
+
+  message Items {
+    string Key = 1;
+    string Value = 2;
+  }
+
+  message Rules {
+    string Pattern = 1;
+    string Key = 2;
+    repeated Items Items = 3;
+  }
+
+  message Terms {
+    string Key = 1;
+    string Title = 2;
+    repeated Rules Rules = 3;
+  }
+
+  message FlightReserveResponsePayment {
+    float Price = 1;
+    int32 Currency = 2;
+    float Discount = 3;
+    uint32 Point = 4;
+    float Tax = 5;
+  }
+
+  message FlightReserveResponseOptionItems {
+    string ID = 1;
+    string Name = 2;
+    string Key = 3;
+    FlightReserveResponsePayment Payment = 4;
+  }
+
+  message Options {
+    string ID = 1;
+    string Name = 2;
+    string Key = 3;
+    string Description = 4;
+    repeated FlightReserveResponseOptionItems Items = 5;
+  }
+
+  message MaxAllowedBaggage {
+    int32 Count = 1;
+    int32 Weight = 2;
+  }
+
+  message Trips {
+    string Aircraft = 1;
+    string FlightNumber = 2;
+    bool IsAirportChange = 3;
+    string  FlightClass = 4;
+    string ClassType = 5;
+    string  ClassTypeName = 6;
+    bool   IsRedEye = 7;
+    bool     IsDayCross = 8;
+    string  AirlineLogo = 9;
+    string   AirlineCode = 10;
+    string     AirlineName = 11;
+    Departure         Departure = 12;
+    Arrival           Arrival = 13;
+  }
+
+  message Groups {
+    TripInfo TripInfo = 1;
+    Trips Trips = 2;
+    MaxAllowedBaggage AllowedBaggage = 3;
+    string GroupToken = 4;
+    repeated Terms Terms = 5;
+    repeated Options Options = 6;
+  }
+
+  message Itineraries {
+    string ServiceKey = 1;
+    repeated Fares Fares = 2;
+    repeated Groups Groups = 3;
+  }
+
+  message Route {
+    Departure Departure = 1;
+    Arrival Arrival = 2;
+  }
+
+  message FlightReserveItem {
+    string RequestToken = 1;
+    string ReserveKey = 2;
+    string ExpireDate = 3;
+    repeated Itineraries Itineraries = 4;
+    Route Routes = 5;
+  }
+  FlightReserveItem Item = 1;
+}

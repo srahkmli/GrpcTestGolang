@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package DrawService;
+
+
+option go_package = "/DrawService";
+
+service DrawService {
+  rpc GetMobileChanceCodeList(MobileChanceCodeListRequest) returns (MobileChanceCodeListResponse) {}
+  rpc AssignMobileChanceCode(AssignChanceCodeRequest) returns (AssignChanceCodeResponse) {}
+  rpc SetDrawUserData(SetDrawUserDataRequest) returns (SetDrawUserDataResponse) {}
+}
+
+
+message MobileChanceCodeListRequest {
+  string mobile_no = 1;
+  string lcode = 2;
+}
+
+message MobileChanceCodeListResponse {
+  repeated ChanceCodeItem chances = 1;
+}
+
+message ChanceCodeItem {
+  int64 start_chance = 1;
+  int64 end_chance = 2;
+  int32 count = 3;
+}
+
+message AssignChanceCodeRequest {
+  string mobile_no = 1;
+  string lcode = 2;
+  int32 count = 3;
+}
+
+message AssignChanceCodeResponse {
+
+}
+
+message SetDrawUserDataRequest {
+  string mobile_no = 1;
+  string lcode = 2;
+  int32 points = 3;
+  string result = 4;
+  string user_data = 5;
+}
+
+message SetDrawUserDataResponse {
+
+}

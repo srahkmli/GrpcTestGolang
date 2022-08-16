@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+package haf80.api.tavanir;
+
+option go_package = "micro/pb/proto/tavanir;tavanir";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/top";
+};
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.tavanir.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.tavanir.Error) returns (haf80.api.tavanir.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.tavanir.CreateErrorRequest) returns (haf80.api.tavanir.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  uint32 serviceCode = 6;
+  string status = 7;
+  string description = 8;
+}
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string status = 6;
+  string description = 7;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+service Tavanir{
+  rpc Inquiry(haf80.api.tavanir.Request)returns(haf80.api.tavanir.InquiryResponse) {
+    option (google.api.http) = {
+      post: "/v1/tavanir/inquiry"
+      body: "*"
+    };
+  }
+}
+
+message Request{
+ string  payId = 1;
+ string  billId = 2;
+ enum typeEnum {
+   electricity = 0;
+   gas = 1;
+   water = 2;
+   tel = 3;
+   telmidterm = 4;
+   mobile = 5;
+   mobilemidterm = 6;
+  };
+  typeEnum type = 3;
+  enum optionEnum {
+    electricitybillinfo = 0;
+    electricitybilldetail = 1;
+    electricitybillfile = 2;
+  }
+  optionEnum option = 4;
+  string dialer = 5;
+}
+message InquiryResponseData{
+  uint32 code = 1;
+  string message = 2;
+  string payId = 3;
+  string billId = 4;
+  uint32 price = 5;
+  string deadline = 6;
+  string ext = 7;
+  string document = 8;
+}
+
+message InquiryResponse{
+  InquiryResponseData data = 1;
+  string phase = 2;
+  string CompanyName = 3;
+  string TariffType  = 4;
+  enum custumerTypeEnum{
+      NATURALCUSTOMER  = 0;
+      JURIDICALCUSTOMER = 1;
+  }
+  custumerTypeEnum customerType = 5;
+  string serialNumber = 6;
+  string serviceAddress = 7;
+  string servicePostCode = 8;
+  float totalBillDebt = 9;
+}

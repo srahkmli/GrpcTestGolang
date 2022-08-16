@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package CampaignService;
+
+
+  option go_package = "/CampaignService";
+
+
+service CampaignService {
+  rpc GetScore(GetScoreRequest) returns (GetScoreResponse) {}
+  rpc UpdateScore(UpdateScoreRequest) returns (UpdateScoreResponse) {}
+  rpc ReserveChance(ReserveChanceRequest) returns (ReserveChanceResponse) {}
+  rpc GetChanceList(GetChanceListRequest) returns (GetChanceListResponse) {}
+  rpc GetChanceCount(GetChanceCountRequest) returns (GetChanceCountResponse) {}
+}
+
+message GetScoreRequest {
+  string user_id = 1;
+  string mobile_no = 2;
+}
+message GetScoreResponse {
+  int64 score = 1;
+}
+
+message UpdateScoreRequest {
+  string user_id = 1;
+  string mobile_no = 2;
+  int64 score = 4;
+  string reference = 5;
+  int64 amount = 6;
+  int64 service_id = 7;
+}
+message UpdateScoreResponse {
+  int64 score = 1;
+}
+
+message ReserveChanceRequest {
+  string user_id = 1;
+  string mobile_no = 2;
+  int64 campaign_id = 3;
+  int32 chance_count = 4;
+  string reference = 5;
+  int64 amount = 6;
+  int64 service_id = 7;
+}
+message ReserveChanceResponse {
+  repeated ChanceList chance_list = 1;
+  int32 total_chance_count = 2;
+}
+message ChanceList {
+  int64 start_chance_code = 1;
+  int64 end_chance_code = 2;
+  int32 count = 3;
+}
+
+message GetChanceListRequest {
+  string user_id = 1;
+  string mobile_no = 2;
+  int64 campaign_code = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+message GetChanceListResponse {
+  repeated ChanceList chance_list = 1;
+  int32 total_chance_count = 2;
+}
+
+message GetChanceCountRequest {
+  string user_id = 1;
+  string mobile_no = 2;
+  int64 campaign_id = 3;
+}
+message GetChanceCountResponse {
+  int32 total_chance_count = 1;
+}

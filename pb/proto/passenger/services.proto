@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+
+package haf80.api.passenger;
+
+option go_package = "passenger/api/pb/passenger;passenger";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "passenger/messages.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/passenger";
+};
+
+service Passenger {
+  rpc AddPassenger (haf80.api.passenger.PassengerModel) returns (haf80.api.passenger.PassengerId) {
+    option (google.api.http) = {
+      post: "/v1/passenger"
+      body: "*"
+    };
+  }
+  rpc UpdatePassenger (haf80.api.passenger.PassengerModel) returns (haf80.api.passenger.PassengerModel) {
+    option (google.api.http) = {
+      put: "/v1/passenger/{id}"
+      body: "*"
+    };
+  }
+  rpc GetPassengerDetail (haf80.api.passenger.PassengerId) returns (haf80.api.passenger.PassengerModel) {
+    option (google.api.http) = {
+      get: "/v1/passenger/{id}"
+    };
+  }
+  rpc GetPassengerList (google.protobuf.Empty) returns (haf80.api.passenger.PassengerListResponse) {
+    option (google.api.http) = {
+      get: "/v1/passenger"
+    };
+  }
+  rpc DeletePassenger (haf80.api.passenger.PassengerId) returns (haf80.api.passenger.PassengerId) {
+    option (google.api.http) = {
+      delete: "/v1/passenger/{id}"
+    };
+  }
+
+}

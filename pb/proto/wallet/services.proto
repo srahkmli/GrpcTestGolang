@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package haf80.api.wallet;
+
+option go_package = "micro/pb/proto/wallet;wallet";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/wallet";
+};
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.wallet.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.wallet.Error) returns (haf80.api.wallet.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.wallet.CreateErrorRequest) returns (haf80.api.wallet.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  uint32 serviceCode = 6;
+  string status = 7;
+  string description = 8;
+}
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string status = 6;
+  string description = 7;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+
+
+service Wallet {
+  // Get the all errors
+  rpc Balance (google.protobuf.Empty) returns (haf80.api.wallet.BalanceResponse) {
+    option (google.api.http) = {
+      get: "/v1/balance"
+    };
+  }
+
+  // initial an order
+  rpc Order (haf80.api.wallet.OrderRequest) returns (haf80.api.wallet.OrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/order"
+      body: "*"
+    };
+  }
+}
+
+message BalanceResponse {
+  int64 balance = 1;
+}
+
+message OrderRequest {
+  uint32 serviceId = 1;
+  string orderId   = 2;
+  string provider  = 3;
+  uint32 price     = 4;
+}
+
+message OrderResponse {
+  string message = 1;
+  int64 balance = 2;
+}

@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+package haf80.api.aggregator;
+
+option go_package = "aggregator/pb/proto/aggregator;aggregator";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/aggregator";
+};
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.aggregator.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.aggregator.Error) returns (haf80.api.aggregator.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.aggregator.CreateErrorRequest) returns (haf80.api.aggregator.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  string status = 6;
+  string type = 7;
+  string description = 8;
+}
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string type = 6;
+  string status = 7;
+  string description = 8;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+
+service Aggregator {
+  // Contact will call a service based on type field in request
+  rpc Contact (haf80.api.aggregator.ContactAggregationRequest) returns (haf80.api.aggregator.ContactAggregationResponse) {
+    option (google.api.http) = {
+      post: "/v1/aggregator/contact"
+      body: "*"
+    };
+  }
+  // Contact will call a service based on type field in request
+  rpc Card (haf80.api.aggregator.BankCardAggregationRequest) returns (haf80.api.aggregator.BankCardAggregationResponse) {
+    option (google.api.http) = {
+      post: "/v1/aggregator/card"
+      body: "*"
+    };
+  }
+}
+
+message ContactAggregationRequest{
+  message Contact {
+    string userName = 1;
+    string profileType = 2;
+    string profileName = 3;
+    string chargeCharge = 4;
+    string chargePhone = 5;
+    string chargePrice = 6;
+    string chargeProfileName = 7;
+    string chargeProfilePicAddress = 8;
+  }
+  repeated Contact data = 1;
+}
+
+// LegacyProfilesEntity(
+//  ItemId=1,
+//  UserName=09121051496,
+//  ProfileType=10,
+//  ProfileName=charge test,
+//  AddData={
+// "CHARGE_CHARGE":"شارژ مستقيم",
+// "CHARGE_PHONE":"09353004040",
+// "CHARGE_PRICE":"شارژ 10,000 ريالي + 9% ارزش افزوده \u003d 10,900 ريال",
+// "CHARGE_PROFILE_NAME":"charge test",
+// "CHARGE_PROFILE_PIC_ADDRESS":""})
+
+
+message ContactAggregationResponse{
+  string message = 1;
+}
+
+message BankCardAggregationRequest{
+  message BankCard {
+    string cardId = 1;
+    string userName = 2;
+    string cardIndex = 3;
+    string cardNumber = 4;
+    string cardCvv = 5;
+    int32  cardExpMonth = 6;
+    int32  cardExoYear = 7;
+    string cardType = 8;
+    string referenceExpiryDate = 9;
+    bool useFanavaranHubSystem = 10;
+    string hubTransactionId = 11;
+    string hubCardId = 12;
+    string panExpiryDate = 13;
+    bool useDirect = 14;
+  }
+  repeated BankCard data = 1;
+}
+
+
+message BankCardAggregationResponse{
+  string message = 1;
+}
+

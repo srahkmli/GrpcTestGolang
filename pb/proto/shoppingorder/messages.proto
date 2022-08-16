@@ -1,0 +1,166 @@
+syntax = "proto3";
+
+package haf80.api.shoppingorder;
+
+option go_package = "shoppingorder/api/pb/shoppingorder;shoppingorder";
+
+import "shoppingorder/enum.proto";
+
+message CreateOrderRequest {
+  repeated string flightID = 1;
+  repeated Passenger passengers = 2;
+}
+
+message Passenger {
+  string passengerID = 8;
+  string nationalCode = 1;
+  string nationality = 2;
+  string gender = 3;
+  string passengerType = 4;
+  string birthDate = 5;
+  Name firstname = 6;
+  Name lastname = 9;
+  Passport passport = 7;
+}
+
+message Passport {
+  string country = 1;
+  string expireDate = 2;
+  string issueDate = 3;
+  string number = 4;
+}
+
+message CreateOrderResponse {
+  string order_id = 1;
+  int64 expireDate = 2;
+}
+
+message OrderIDRequest {
+  string order_id = 1;
+}
+
+message GetOrdersResponse {
+  repeated GetOrderResponse orders = 1;
+}
+
+message GetOrderResponse {
+  string order_id = 1;
+  int64 expireDate = 2;
+  OrderStatus status = 3;
+  OrderPayment payment = 4;
+  repeated OrderPassenger passengers = 5;
+}
+
+message OrderPayment {
+  uint64 price = 1;
+  uint64 tax = 2;
+  uint64 total_price = 3;
+  uint64 discount = 4;
+}
+
+message OrderPassenger {
+  Passenger passenger = 1;
+  repeated Ticket tickets = 2;
+}
+
+message Ticket {
+  TicketPayment payment = 1;
+  TicketStatus status = 2;
+  string ticket_id = 3;
+  string pnr = 4;
+  string ticket_number = 5;
+  int64 issue_date = 6;
+  string order_number =7;
+  FlightInfo flight_info = 8;
+}
+
+message TicketPayment {
+  uint64 price = 1;
+  uint64 tax = 2;
+  uint64 total_price =3;
+}
+
+message FlightInfo {
+  bool isCharter = 1;
+  Airline airline = 2;
+  FlightClass flightClass = 3;
+  FlightEndpoint departure = 4;
+  FlightEndpoint arrival = 5;
+  string flightID = 6;
+  string airplaneModel = 7;
+  string flightNumber = 8;
+  string fareClass = 9;
+  repeated string options = 10;
+  repeated Baggage allowedBaggage = 11;
+}
+message Baggage {
+  string code = 1;
+  Name name = 2;
+  int32 count = 3;
+  int32 weight = 4;
+}
+message Airport {
+  Country country = 1;
+  City city = 2;
+  Name name = 3;
+  string iata = 4;
+}
+message FlightEndpoint {
+  int64 date = 1;
+  string terminal = 2;
+  Airport airport = 3;
+}
+
+message Promotion {
+  Discount onThis = 1;
+  Discount onNext = 2;
+}
+
+message Discount {
+  int32 flat = 1;
+  int32 percent = 2;
+}
+
+message Airline {
+  string code = 1;
+  string name = 2;
+}
+
+enum FlightClass {
+  ECONOMY = 0;
+  BUSINESS = 1;
+  PREMIUM = 2;
+}
+
+message Country {
+  string twoLetterCode = 1;
+  string code = 2;
+  Name name = 3;
+}
+
+message City {
+  Name name = 1;
+  string iata = 2;
+}
+
+
+message Name {
+  string farsi = 1;
+  string english = 2;
+}
+
+message GetOrderPaymentInfoResponse {
+  string payment_id = 1;
+  int64 service_code = 2;
+  string provider = 3;
+  int64 price = 4;
+}
+
+message TicketIDRequest {
+  string ticket_id = 1;
+}
+
+message PassengerErrorResponse {
+  string field = 1 ;
+  string message = 2 ;
+}

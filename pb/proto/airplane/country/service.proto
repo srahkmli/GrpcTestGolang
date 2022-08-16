@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package haf80.api.airplane.country;
+
+option go_package = "micro/api/pb/airplane/country;country";
+
+import "google/api/annotations.proto";
+import "airplane/country/messages.proto";
+import "google/protobuf/empty.proto";
+
+service Countries {
+    rpc AddCountry (haf80.api.airplane.country.Country) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+        put: "/v1/airplane/country/new"
+        body: "*"
+    };
+  }
+
+  rpc ListCountries (google.protobuf.Empty) returns (stream haf80.api.airplane.country.Country) {
+    option (google.api.http) = {
+      post: "/v1/airplane/country/list"
+      body: "*"
+    };
+  }
+
+  rpc EditCountry (haf80.api.airplane.country.Country) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/airplane/country/edit"
+      body: "*"
+    };
+  }
+}

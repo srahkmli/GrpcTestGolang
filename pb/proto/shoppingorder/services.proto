@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package haf80.api.shoppingorder.flight;
+
+option go_package = "shoppingorder/api/pb/shoppingorder;shoppingorder";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
+import "shoppingorder/messages.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/shoppingorder";
+};
+
+service Order {
+  rpc CreateOrder (CreateOrderRequest) returns (CreateOrderResponse) {
+    option (google.api.http) = {
+      post:"/v1/orders"
+      body:"*"
+    };
+  }
+
+  rpc CancelOrder (OrderIDRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post:"/v1/orders/{order_id}/cancel"
+      body:"*"
+    };
+  }
+
+  rpc GetOrder (OrderIDRequest) returns (GetOrderResponse) {
+    option (google.api.http) = {
+      get:"/v1/orders/{order_id}"
+    };
+  }
+
+  rpc GetOrders (google.protobuf.Empty) returns (GetOrdersResponse) {
+    option (google.api.http) = {
+      get:"/v1/orders"
+    };
+  }
+
+  rpc GetTicket (TicketIDRequest) returns (Ticket) {
+    option (google.api.http) = {
+      get:"/v1/tickets/{ticket_id}"
+    };
+  }
+
+  rpc GetOrderPaymentInfo (OrderIDRequest) returns (GetOrderPaymentInfoResponse) {
+    option (google.api.http) = {
+      get:"/v1/orders/{order_id}/payment"
+    };
+  }
+}

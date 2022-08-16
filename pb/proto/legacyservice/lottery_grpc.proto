@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+
+package LotteryService;
+
+
+option go_package = "/LotteryService";
+
+
+service LotteryService {
+  rpc GetLotterySpec(GetLotterySpecRequest) returns (GetLotterySpecResponse) {}
+  rpc SaveCampResult(SaveCampResultRequest) returns (SaveCampResultResponse) {}
+  rpc GetCampSpec(GetCampSpecRequest) returns (GetCampSpecResponse) {}
+  rpc GetLotteryResult(GetLotteryResultRequest) returns (GetLotteryResultResponse) {}
+  rpc DoLottery(DoLotteryRequest) returns (DoLotteryResponse) {}
+  rpc DoContinusLottery(DoContinusLotteryRequest) returns (DoContinusLotteryResponse) {}
+  rpc UpdateUserData(UpdateUserDataRequest) returns (UpdateUserDataResponse) {}
+}
+
+//    GetLotterySpec(mobileNo string, langID int, lcode string) (msgOut string, res int64, err error)
+message GetLotterySpecRequest {
+  string mobile_no = 1;
+  int32 lang_id = 2;
+  string lcode = 3;
+}
+message GetLotterySpecResponse {
+  string msg_out = 1;
+  int64 res = 2;
+}
+
+//    SaveCampResult(mobileNo string, langID int, awardPoints int64, campID, campStep, cmdStr string) (msgOut string, res int64, err error)
+message SaveCampResultRequest {
+  string mobile_no = 1;
+  int32 lang_id = 2;
+  int64 award_point = 3;
+  string camp_id = 4;
+  string camp_step = 5;
+  string camp_str = 6;
+}
+message SaveCampResultResponse {
+  string msg_out = 1;
+  int64 res = 2;
+}
+
+//    GetCampSpec(mobileNo string, langID int, awardPoints int64, campID, campStep string) (msgOut string, res int64, err error)
+message GetCampSpecRequest {
+  string mobile_no = 1;
+  int32 lang_id = 2;
+  int64 award_point = 3;
+  string camp_id = 4;
+  string camp_step = 5;
+}
+message GetCampSpecResponse {
+  string msg_out = 1;
+  int64 res = 2;
+}
+
+//    GetLotteryResult(mobileNo string, langID int, lcode string) (msgOut string, res int64, err error)
+message GetLotteryResultRequest {
+  string mobile_no = 1;
+  int32 lang_id = 2;
+  string lcode = 3;
+}
+message GetLotteryResultResponse {
+  string msg_out = 1;
+  int64 res = 2;
+}
+
+//    DoLottery(mobileNo string, lcode string, userData string) (msgOut string, res int64, err error)
+message DoLotteryRequest {
+  string mobile_no = 1;
+  string lcode = 2;
+  string user_data = 3;
+}
+message DoLotteryResponse {
+  string msg_out = 1;
+  int64 res = 2;
+}
+
+//    DoContinusLottery(mobileNo string) (award, awardMul, res int64, err error)
+message DoContinusLotteryRequest {
+  string mobile_no = 1;
+}
+message DoContinusLotteryResponse {
+  int64 award = 1;
+  int64 award_mul = 2;
+  int64 res = 3;
+}
+
+//    UpdateUserData(mobileNo string, lastVariableName, lastVariableValue string) (msgOut string, res int64, err error)
+message UpdateUserDataRequest {
+  string mobile_no = 1;
+  string last_vairable_name = 2;
+  string last_variable_value = 3;
+}
+message UpdateUserDataResponse {
+  string msg_out = 1;
+  int64 res = 2;
+}

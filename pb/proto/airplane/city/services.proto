@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package haf80.api.airplane.city;
+
+option go_package = "micro/api/pb/airplane/city;city";
+
+import "google/api/annotations.proto";
+import "airplane/city/messages.proto";
+import "google/protobuf/empty.proto";
+
+service Cities {
+    rpc AddCity (haf80.api.airplane.city.City) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+        put: "/v1/airplane/city/new"
+        body: "*"
+    };
+  }
+
+  rpc ListCities (google.protobuf.Empty) returns (stream haf80.api.airplane.city.City) {
+    option (google.api.http) = {
+      post: "/v1/airplane/city/list"
+      body: "*"
+    };
+  }
+
+  rpc EditCity (haf80.api.airplane.city.City) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/airplane/city/edit"
+      body: "*"
+    };
+  }
+}

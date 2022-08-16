@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package haf80.api.airplane.country;
+
+option go_package = "micro/api/pb/airplane/country;country";
+
+message Country {
+    uint64 Id = 1;
+    // map<string , string> Name = 2;
+}

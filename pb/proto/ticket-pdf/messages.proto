@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package haf80.api.ticketpdf;
+
+option go_package = "ticket-pdf/api/pb/ticketpdf;ticketpdf";
+
+message TicketId {
+  string id = 1;
+}
+
+message TicketUrl {
+  string url = 1;
+}

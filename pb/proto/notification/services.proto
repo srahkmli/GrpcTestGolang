@@ -1,0 +1,188 @@
+syntax = "proto3";
+
+package haf80.api.notification;
+
+option go_package = "micro/pb/proto/notification;notification";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/notification";
+};
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.notification.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.notification.Error) returns (haf80.api.notification.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.notification.CreateErrorRequest) returns (haf80.api.notification.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+  // Send a new notification
+  rpc Send(haf80.api.notification.SendNotificationRequest) returns (haf80.api.notification.SendNotificationResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/send"
+      body: "*"
+    };
+  }
+  // Send a group of  new notification
+  rpc SendGrp (haf80.api.notification.SendGrpNotificationRequest) returns (haf80.api.notification.SendNotificationResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/sendGrp"
+      body: "*"
+    };
+  }
+
+  // GetStatus notification
+  rpc GetStatus (haf80.api.notification.GetStatusRequest) returns (haf80.api.notification.GetStatusResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/sms/status"
+      body: "*"
+    };
+  }
+  // GetStatus Email
+  rpc GetStatusEmail (haf80.api.notification.GetStatusRequest) returns (haf80.api.notification.GetStatusEmailResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/email/status"
+      body: "*"
+    };
+  }
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  uint32 serviceCode = 6;
+  string status = 7;
+  string description = 8;
+}
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string status = 6;
+  string description = 7;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+service sms {
+  // Send a new notification
+  rpc Send(haf80.api.notification.SendNotificationRequest) returns (haf80.api.notification.SendNotificationResponse);
+}
+
+service email{
+  // Send a new notification via email
+  rpc SendEmail(haf80.api.notification.SendEmailRequest) returns (haf80.api.notification.SendEmailResponse);
+}
+
+
+message SendGrpNotificationRequest{
+  string lang = 1;
+  string service = 2;
+  string body = 3;
+  repeated string mobile = 4;
+}
+
+message SendNotificationRequest{
+  string lang = 1;
+  string service = 2;
+  string mobile = 3;
+  string body = 4;
+  string provider = 5;
+}
+
+message SendNotificationResponse{
+  string message = 1;
+}
+
+message GetStatusRequest{
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message GetStatusData{
+  string mobile = 1;
+  string serverId = 2;
+  string status = 3;
+}
+message GetStatusResponse{
+    repeated GetStatusData messages = 1;
+}
+
+message GetStatusEmailData{
+  repeated string To = 1;
+  repeated string Bcc = 2 ;
+  repeated string Cc = 3;
+  string Subject = 4;
+  string Status = 5;
+}
+message GetStatusEmailResponse{
+    repeated GetStatusEmailData data = 1;
+}
+
+message SendEmailRequest {
+  uint32 templateId = 1;
+  uint32 serviceId = 2;
+  string serviceName = 3;
+  map<string,string> body = 4;
+  repeated string to = 5;
+  repeated string bcc = 6;
+  repeated string cc = 7;
+  string subject = 8;
+  repeated string attachments = 9;
+}
+
+message SendEmailResponse{
+  string message = 1;
+}
+
+
+service Push {
+  rpc Register(haf80.api.notification.RegisterPushNotificationRequest) returns (haf80.api.notification.RegisterPushNotificationResponse) {
+    option (google.api.http) = {
+      post:"/v1/push/register"
+      body:"*"
+    };
+  }
+}
+
+message RegisterPushNotificationRequest{
+  string token = 1;
+}
+message RegisterPushNotificationResponse{
+  string status = 1;
+}

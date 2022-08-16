@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package haf80.api.tourism.flightprovider;
+
+option go_package = "tourism/api/pb/flightprovider";
+
+message Name {
+    string farsi = 1;
+    string english = 2;
+}

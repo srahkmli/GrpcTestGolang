@@ -1,0 +1,230 @@
+syntax = "proto3";
+
+package haf80.api.usermanager;
+
+option go_package = "micro/pb/proto/profile;profile";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/profile";
+};
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.usermanager.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.usermanager.Error) returns (haf80.api.usermanager.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.usermanager.CreateErrorRequest) returns (haf80.api.usermanager.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+
+  //Insert will insert an user profile in db
+  rpc Insert(haf80.api.usermanager.InsertProfileRequest) returns (haf80.api.usermanager.Response) {
+    option (google.api.http) = {
+      post: "/v1/admin/profile"
+      body: "*"
+    };
+  }
+}
+
+
+message InsertProfileRequest {
+  string userId = 1;
+  string  mobile = 2;
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  uint32 serviceCode = 6;
+  string status = 7;
+  string description = 8;
+}
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string status = 6;
+  string description = 7;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+
+// QuickAction service
+service QuickAction {
+  // Get the all quick actions
+  rpc Get (haf80.api.usermanager.GetQuickActionRequest) returns (haf80.api.usermanager.GetQuickActionResponse) {
+    option (google.api.http) = {
+      get: "/v1/user/quickaction"
+    };
+  }
+
+  // Add quick action
+  rpc Add (haf80.api.usermanager.AddQuickActionRequest) returns (haf80.api.usermanager.AddQuickActionResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/quickaction"
+      body: "*"
+    };
+  }
+
+  // delete the quick action
+  rpc Delete (haf80.api.usermanager.DeleteQuickActionRequest) returns (haf80.api.usermanager.DeleteQuickActionResponse) {
+    option (google.api.http) = {
+      delete: "/v1/user/quickaction"
+    };
+  }
+
+  // Order for the a action
+  rpc Order (haf80.api.usermanager.OrderQuickActionRequest) returns (haf80.api.usermanager.OrderQuickActionResponse) {
+    option (google.api.http) = {
+      post: "/v1/user/quickaction/order"
+      body: "*"
+    };
+  }
+}
+
+message QuickActionMessage {
+  string id = 1;
+  string type = 2;
+  uint32 price = 3;
+  string title = 4;
+  string subtitle = 5;
+  string description = 6;
+}
+
+message GetQuickActionRequest {
+  uint32 limit = 1;
+  uint32 offset = 2;
+}
+
+message GetQuickActionResponse {
+  uint32 total = 1;
+  uint32 page = 2;
+  repeated QuickActionMessage data = 3;
+}
+
+message AddQuickActionRequest {
+  string type = 1;
+  uint32 price = 2;
+  uint32 serviceId = 3;
+  map<string, string> data = 4;
+}
+message AddQuickActionResponse {
+  string message = 1;
+}
+
+message DeleteQuickActionRequest {
+  string id = 1;
+}
+message DeleteQuickActionResponse {
+  string message = 1;
+}
+
+message OrderQuickActionRequest {
+  string id = 1;
+}
+message OrderQuickActionResponse {
+  uint32 serviceId = 1;
+  string orderId = 2;
+  string provider = 3;
+  uint32  price = 4;
+  string message = 5;
+}
+
+
+// Profile service
+service Profile {
+  // GetAll get all the fields of user
+  rpc Profile (google.protobuf.Empty) returns (haf80.api.usermanager.UserProfile) {
+    option (google.api.http) = {
+      get: "/v1/profile"
+    };
+  }
+
+  // Get get gist of profile first name ,last name ,progress , image and mobile
+  rpc Gist (google.protobuf.Empty) returns (haf80.api.usermanager.UserProfileGist) {
+    option (google.api.http) = {
+      get: "/v1/profile/gist"
+    };
+  }
+
+  //Update will update an user profile
+  rpc Update(haf80.api.usermanager.UserProfile) returns (haf80.api.usermanager.Response) {
+    option (google.api.http) = {
+      patch: "/v1/profile"
+      body: "*"
+    };
+  }
+
+}
+
+//UserProfile contains all the field of user profile
+message UserProfile {
+  string image = 1;
+  uint32 progress = 2;
+  string city = 3;
+  string education = 4;
+  bool   marriage = 5 ;
+  string career = 6;
+  string interests = 7 ;
+  string disability = 8 ;
+  string mobile = 9;
+  string email = 10;
+  string telephone = 11;
+  string firstName = 12;
+  string lastName = 13;
+  string nationalCode = 14;
+  google.protobuf.Timestamp  birthDate = 15;
+  string cityOfBirth = 16;
+  string gender = 17;
+}
+
+//UserProfileGist contains gist of profile
+message UserProfileGist{
+  string firstName = 1;
+  string  lastName = 2;
+  string image = 3;
+  uint32 progress = 4;
+  string mobile = 5;
+}
+
+//Response contains a message to show if the process was successful or not
+message Response {
+  string message = 1;
+}

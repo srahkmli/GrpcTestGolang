@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+package haf80.api.domesticflight.aggregator;
+
+option go_package = "micro/api/pb/domesticflight/aggregator";
+
+message PrepareFlightListRequest {
+    repeated FlightListQuery query = 1;
+}
+
+message FlightListQuery {
+    string originIATA = 2;
+    string destinationIATA = 3;
+    Passenger passenger = 4;
+    string departureDate = 5;
+}
+
+message Passenger {
+    uint32 adultCount = 1;
+    uint32 childCount = 2;
+    uint32 infantCount = 3;
+}
+
+message PrepareFlightListResponse {
+    string requestID = 1;
+    int32 validForSeconds = 2;
+}
+
+message FlightListRequest {
+    string requestID = 1;
+}
+
+message FlightListResponse {
+    repeated FlightQueryResult flightQueryResult = 1;
+    string requestID = 2;
+    string imageCDN = 3;
+    bool finished = 4;
+}
+
+message FlightQueryResult {
+    repeated FlightInfo flightList = 1;
+}
+
+message FlightInfo {
+    uint32 price = 1;
+    uint32 remainingSeats = 2;
+    bool isCharter = 3;
+    Airline airline = 4;
+    FlightClass flightClass = 5;
+    uint32 numberOfStops = 6;
+    uint32 totalStopDuration = 7;
+    FlightEndpoint departure = 8;
+    FlightEndpoint arrival = 9;
+    string flightID = 10;
+    string airplaneModel = 11;
+    Promotion promotion = 12;
+    string flightNumber = 13;
+    Fare fare = 15;
+    string fareClass = 16;
+    repeated string options = 19;
+    int32 priority = 20;
+    repeated Baggage allowedBaggage = 21;
+}
+
+message Baggage {
+    string code = 1;
+    Name name = 2;
+    int32 count = 3;
+    int32 weight = 4;
+}
+
+message FlightEndpoint {
+    int32 date = 1;
+    string terminal = 2;
+    Airport airport = 3;
+}
+
+message Promotion {
+    Discount onThis = 1;
+    Discount onNext = 2;
+}
+
+message Discount {
+    int32 flat = 1;
+    int32 percent = 2;
+}
+
+message Airline {
+    string code = 1;
+    string name = 2;
+}
+
+enum FlightClass {
+    ECONOMY = 0;
+    BUSINESS = 1;
+    PREMIUM = 2;
+}
+
+message Fare {
+    uint32 adult = 1;
+    uint32 child = 2;
+    uint32 infant = 3;
+}
+
+message AirportSearchRequest {
+    string query = 1;
+    bool domestic = 2;
+}
+
+message AirportSearchResponse {
+    repeated CitySearchResult cities = 1;
+    repeated Airport airports = 2;
+}
+
+message CitySearchResult {
+    City city = 1;
+    Country country = 2;
+    repeated Airport airports = 3;
+}
+
+message Airport {
+    Country country = 1;
+    City city = 2;
+    Name name = 3;
+    string iata = 4;
+}
+
+message Country {
+    string twoLetterCode = 1;
+    string code = 2;
+    Name name = 3;
+}
+
+message City {
+    Name name = 1;
+    string iata = 2;
+}
+
+message Name {
+    string farsi = 1;
+    string english = 2;
+}

@@ -1,0 +1,668 @@
+syntax = "proto3";
+
+package haf80.api.ghafele.flight;
+
+option go_package = "ghafele/api/pb/ghafele/flight;flight";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/any.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/ghafele";
+};
+
+service Flight {
+  rpc GetTickets (GhafeleFlightRequest) returns (GhafeleFlightResponse) {
+    option (google.api.http) = {
+      post:"/v1/flight/tickets"
+      body:"*"
+    };
+  }
+
+  rpc GetTicketInfo (GhafeleFlightInfoRequest) returns (GhafeleFlightResponse) {
+    option (google.api.http) = {
+      post:"/v1/flight/ticketInfo"
+      body:"*"
+    };
+  }
+
+  rpc ReserveTicket (GhafeleFlightReserveRequest) returns (GhafeleFlightReserveResponse) {
+    option (google.api.http) = {
+      post:"/v1/flight/reserve"
+      body:"*"
+    };
+  }
+
+  rpc SaveTicket (GhafeleFlightSaveRequest) returns (GhafeleFlightSaveResponse) {
+    option (google.api.http) = {
+      post:"/v1/flight/save"
+      body:"*"
+    };
+  }
+
+}
+
+message GhafeleFlightErrorResponse {
+  int32 code = 1;
+  string message = 2;
+  google.protobuf.Any details = 3;
+}
+
+message GhafeleFlightRequest {
+  string SessionId = 1;
+  int32 AdultCount = 2;
+  int32 ChildCount = 3;
+  int32 InfantCount = 4;
+  int32 Currency = 5;
+  int32 MaxStop = 6;
+  string FlightClass = 7;
+  repeated Itineraries Itineraries = 8;
+}
+
+message GhafeleFlightInfoRequest {
+  string SessionId = 1;
+  string SecretKey = 2;
+  int32 AdultCount = 3;
+  int32 ChildCount = 4;
+  int32 InfantCount = 5;
+  int32 Currency = 6;
+  int32 MaxStop = 7;
+  string FlightClass = 8;
+  Itineraries Itineraries = 9;
+}
+
+message GhafeleFlightReserveRequest {
+  message Items {
+    message Itinerary {
+      string ServiceKey = 1;
+    }
+    string SiteToken = 1;
+    int32 AdultCount = 2;
+    int32 ChildCount = 3;
+    int32 InfantCount = 4;
+    int32 Currency = 5;
+    repeated Itinerary Itineraries = 6;
+  }
+  string SystemToken = 1;
+  string UserToken = 2;
+  Items Item = 3;
+}
+
+message GhafeleFlightResponse {
+  SerRespItem item = 1;
+  int32 status = 2;
+  string ttoken = 3;
+  string message = 4;
+  repeated SystemMessage SystemMessage = 5;
+}
+
+message GhafeleFlightReserveResponse {
+  message Payment {
+    float Price = 1;
+    int32 Currency = 2;
+    float Discount = 3;
+    float Point = 4;
+    float Tax = 5;
+  }
+
+  message Tarrif {
+    int32 ID = 1;
+    string Name = 2;
+    bool IsSelectable = 3;
+    bool RequireUserConfirm = 4;
+    Payment Payment = 5;
+  }
+
+  message Fares {
+    int32 PersonType = 1;
+    repeated Tarrif Tarrif = 2;
+  }
+
+  message Departure {
+    string Code = 1;
+    string Name = 2;
+    string DateTime = 3;
+    string UTCDateTime = 4;
+    string Terminal = 5;
+    string City = 6;
+    string CityCode = 7;
+    uint32 Lat = 8;
+    uint32 Lon = 9;
+  }
+
+  message Arrival {
+    string Code = 1;
+    string Name = 2;
+    string DateTime = 3;
+    string UTCDateTime = 4;
+    string Terminal = 5;
+    string City = 6;
+    string CityCode = 7;
+    uint32 Lat = 8;
+    uint32 Lon = 9;
+  }
+
+  message TripInfo {
+    Departure Departure = 1;
+    Arrival Arrival = 2;
+  }
+
+  message Items {
+    string Key = 1;
+    string Value = 2;
+  }
+
+  message Rules {
+    string Pattern = 1;
+    string Key = 2;
+    repeated Items Items = 3;
+  }
+
+  message Terms {
+    string Key = 1;
+    string Title = 2;
+    repeated Rules Rules = 3;
+  }
+
+  message GhafeleFlightReserveResponsePayment {
+    float Price = 1;
+    int32 Currency = 2;
+    float Discount = 3;
+    uint32 Point = 4;
+    float Tax = 5;
+  }
+
+  message GhafeleFlightReserveResponseOptionItems {
+    string ID = 1;
+    string Name = 2;
+    string Key = 3;
+    GhafeleFlightReserveResponsePayment Payment = 4;
+  }
+
+  message Options {
+    string ID = 1;
+    string Name = 2;
+    string Key = 3;
+    string Description = 4;
+    repeated GhafeleFlightReserveResponseOptionItems Items = 5;
+  }
+
+  message Groups {
+    TripInfo TripInfo = 1;
+    string GroupToken = 2;
+    repeated Terms Terms = 3;
+    repeated Options Options = 4;
+  }
+
+  message Itineraries {
+    string ServiceKey = 1;
+    repeated Fares Fares = 2;
+    repeated Groups Groups = 3;
+  }
+
+  message GhafeleFlightReserveItem {
+    string RequestToken = 1;
+    string ReserveKey = 2;
+    string ExpireDate = 3;
+    repeated Itineraries Itineraries = 4;
+  }
+  GhafeleFlightReserveItem Item = 1;
+}
+
+message GhafeleFlightSaveRequest {
+
+  message Contact {
+    string FirstName = 1;
+    string LastName = 2;
+    string Phone = 3;
+    string Email = 4;
+    string Mobile = 5;
+    int32 Gender = 6;
+  }
+
+  message Itineraries {
+    string ServiceKey = 1;
+  }
+
+  message Name {
+    string FirstName = 1;
+    string LastName = 2;
+    string FirstNameEnglish = 3;
+    string LastNameEnglish = 4;
+    string MiddleName = 5;
+    int32 Title = 6;
+  }
+
+  message Passport {
+    string Country = 1;
+    string ExpireDate = 2;
+    string IssueDate = 3;
+    string Number = 4;
+  }
+
+  message Option {
+    string ServiceKey = 1;
+    string GroupToken = 2;
+    string PromotionCode = 3;
+    int32 MealPreference = 4;
+  }
+
+  message Passengers {
+    uint32 PersonID = 1;
+    string NationalCode = 2;
+    string Nationality = 3;
+    string BirthPlace = 4;
+    bool Wheelchair = 5;
+    int32 Gender = 6;
+    string BirthDate = 7;
+    int32 PassengerType = 8;
+    Name Name = 9;
+    Passport Passport = 10;
+    repeated Option Option = 11;
+  }
+
+  message GhafeleFlightSaveRequestItem {
+    string RequestToken = 1;
+    string ReserveKey = 2;
+    int32 Currency = 3;
+    string PromotionCode = 4;
+    Contact Contact = 5;
+    repeated Itineraries Itineraries = 6;
+    repeated Passengers Passengers = 7;
+  }
+
+  string SystemToken = 1;
+  string UserToken = 2;
+  uint32 SystemID = 3;
+  GhafeleFlightSaveRequestItem Item = 4;
+}
+
+message GhafeleFlightSaveResponse {
+
+  message Contact {
+    string FirstName = 1;
+    string LastName = 2;
+    string Mobile = 3;
+    string Phone = 4;
+    string Email = 5;
+    int32 Gender = 6;
+  }
+
+  message Name {
+    string FirstName = 1;
+    string LastName = 2;
+    string FirstNameEnglish = 3;
+    string LastNameEnglish = 4;
+    string MiddleName = 5;
+    int32 Title = 6;
+  }
+
+  message Passport {
+    string Country = 1;
+    string ExpireDate = 2;
+    string IssueDate = 3;
+    string Number = 4;
+  }
+
+  message Options {
+    string OptionID = 1;
+    string OptionName = 2;
+    string ItemID = 3;
+    string ItemName = 4;
+  }
+
+  message Details {
+    string GroupToken = 1;
+    string GroupName = 2;
+    repeated Options Options = 3;
+    GhafeleFlightSaveFare Fare = 4;
+  }
+
+  message Passengers {
+    int32 PersonID = 1;
+    int32 Gender = 2;
+    int32 PassengerType = 3;
+    string BirthDate = 4;
+    string NationalCode = 5;
+    string Nationality = 6;
+    string BirthPlace = 7;
+    bool Wheelchair = 8;
+    Name Name = 9;
+    Passport Passport = 10;
+    GhafeleFlightSaveFare Fare = 11;
+    repeated Details Details = 12;
+  }
+
+  message Itineraries {
+    GhafeleFlightSaveFare Fare = 1;
+    repeated google.protobuf.Any Pricing = 2;
+    repeated Passengers Passengers = 3;
+  }
+
+  message GhafeleFlightSaveItem {
+    string RequestToken = 1;
+    string ExpireDate = 2;
+    int32 Currency = 3;
+    Contact Contact = 4;
+    GhafeleFlightSaveFare Fare = 5;
+    repeated Itineraries Itineraries = 6;
+  }
+
+  GhafeleFlightSaveItem Item = 1;
+  uint32 Status = 2;
+  string TToken = 3;
+  uint32 StatusBase = 4;
+  string Message = 5;
+}
+
+message GhafeleFlightSaveFare {
+  uint32 Price = 1;
+  uint32    Currency = 2;
+  float  Discount = 3;
+  uint32   Point = 4;
+  float  Tax_Fee = 5;
+  float   ServiceTax = 6;
+  uint32 Fare = 7;
+}
+
+message SystemMessage {
+  string Lable = 1;
+  string Message = 2;
+}
+
+message SerRespItem {
+  string LogoPrefix = 1;
+  string SessionID = 2;
+  repeated SerRespItemItin Itineraries = 3;
+  repeated Airport Locations = 4;
+}
+
+message SerRespItemItin {
+  repeated SerRespTrip Trips = 1;
+  repeated SerRespTripRoute TripRoutes = 2;
+}
+
+message SerRespTrip {
+  string ServiceKey = 1;
+  int32 Remain = 2;
+  SerRespFare Fare = 3;
+  repeated SerRespPassengerFare PassengerFares = 4;
+  SerRespTripTerm Term = 5;
+  repeated SerRespGroup Groups = 6;
+  SerRespRefundPolicy RefundPolicy = 7;
+}
+
+message SerRespGroup {
+  int32 Distance = 1;
+  int32 NumberOfStop = 2;
+  SerRespDuration Duration = 3;
+  SerRespJourney Departure = 4;
+  SerRespJourney Arrival = 5;
+  SerRespGroupTerm Term = 6;
+  repeated SerRespLeg Legs = 7;
+}
+
+message SerRespLeg {
+  string Aircraft = 1;
+  string FlightNumber = 2;
+  bool IsAirportChange = 3;
+  string FlightClass = 4;
+  string ClassType = 5;
+  string ClassTypeName = 6;
+  SerRespLegTerm Term = 7;
+  SerRespDuration Duration = 8;
+  SerRespAirline Airline = 9;
+  SerRespJourney Departure = 10;
+  SerRespJourney Arrival = 11;
+  repeated SerRespFacility Facilities = 12;
+}
+
+message SerRespJourney {
+  string Name = 1;
+  string Code = 2;
+  string DateTime = 3;
+  string UTCDateTime = 4;
+  string Country = 5;
+  string City = 6;
+  string Airport = 7;
+  string Terminal = 8;
+  float Latitude = 9;
+  float Longitude = 10;
+}
+
+message SerRespPassengerFare {
+  int32 Type = 1;
+  string TypeName = 2;
+  SerRespFare Fare = 3;
+}
+
+message SerRespDuration {
+  int32 Flight = 1;
+  int32 Stop = 2;
+}
+
+message SerRespFare {
+  float price = 1;
+  int32 Currency = 2;
+  float Discount = 3;
+  int32 point = 4;
+  float TaxFee = 5;
+  float ServiceTax = 6;
+}
+
+message SerRespTripTerm {
+  enum DisableStatusEnumerate{
+    NotDisable = 0;
+    CompleteCapacity = 1;
+    InsufficientCapacity = 2;
+    PassengerLimitation = 3;
+    MovedOn = 4;
+    ExclusiveLimitation = 5;
+  }
+  string LimitationMessage = 1;
+  int32 MaxCount = 2;
+  int32 MinCount = 3;
+  bool IsDisable = 4;
+  DisableStatusEnumerate DisableStatus = 5;
+  string DisableMessage = 6;
+  bool IsPassportMandatory = 7;
+  bool isVisaMandatory = 8;
+  bool IsReservable = 9;
+  bool RequireUserConfirm = 10;
+}
+
+message SerRespGroupTerm {
+  bool IsCharter = 1;
+  bool isRefundable = 2;
+  string OfferText = 3;
+}
+
+message SerRespLegTerm {
+  repeated MaxAllowedBaggage MaxAllowedBaggage = 1;
+  bool IsRedEye = 2;
+  bool IsDayCross = 3;
+}
+
+
+message MaxAllowedBaggage {
+  string Code = 1;
+  string Name = 2;
+  MaxAllowedBaggageItem Item = 3;
+}
+
+message MaxAllowedBaggageItem {
+  int32 Count = 1;
+  int32 Weight = 2;
+}
+
+message SerRespAirline {
+  string Code = 1;
+  string Name = 2;
+  string Logo = 3;
+}
+
+message SerRespFacility {
+  message SerRespFacilityItems {
+    int32 ID = 1;
+    string Name = 2;
+    string Code = 3;
+  }
+  int32 ID = 1;
+  string Name = 2;
+  string Code = 3;
+  repeated SerRespFacilityItems Items = 4;
+}
+
+message SerRespRefundPolicy {
+  string BookingClass = 1;
+  string AirlineCode = 2;
+  bool IsAvailable = 3;
+  repeated SerRespPenaltyRule PenaltyRules = 5;
+}
+
+message SerRespPenaltyRule {
+  string By = 1;
+  float Percent = 2;
+}
+
+message SerRespTripRoute {
+  Departure Departure = 1;
+  Arrival Arrival = 2;
+}
+
+message Departure {
+  string Name = 1;
+  string Code = 2;
+  string DateTime = 3;
+  string UTCDateTime = 4;
+  string Country = 5;
+  string City = 6;
+  string Terminal = 7;
+}
+
+message Arrival {
+  string Name = 1;
+  string Code = 2;
+  string DateTime = 3;
+  string UTCDateTime = 4;
+  string Country = 5;
+  string City = 6;
+  string Terminal = 7;
+}
+
+message  Airport {
+  string Code = 1;
+  string Name = 2;
+  string Iata = 3;
+  string Airport = 4;
+  string Terminal = 5;
+  string City = 6;
+  string CityCode = 7;
+  string Country = 8;
+  string CountryCode = 9;
+  float  Lat = 10;
+  float  Lon = 11;
+}
+
+message Itineraries {
+  string Departure = 1;
+  string Arrival = 2;
+  string Date = 3;
+}
+
+//message GhafeleFlightResponse {
+//  Items items = 1;
+//  int32 status = 2;
+//  string ttoken = 3;
+//  string message = 4;
+//  repeated SystemMessage system_message = 5;
+//}
+//
+//message Items{
+//  repeated Tickets ticket = 1;
+//}
+//
+//message Tickets {
+//  Ticket toward = 1;
+//  Ticket backward = 2;
+//}
+//
+//message Ticket {
+//  string ticketId = 1;
+//  int32 remain = 2;
+//  float price = 3;
+//  float discount = 4;
+//  int32 Point = 5;
+//  float tax_fee = 6;
+//  float service_tax = 7;
+//  repeated AffiliatesFares  affiliates_fares = 8;
+//  int32 max_count = 9;
+//  int32 min_count = 10;
+//  bool is_disable = 11;
+//  int32 disable_status = 12;
+//  string disable_message = 13;
+//  bool is_passport_mandatory = 14;
+//  bool is_visa_mandatory = 15;
+//  bool is_reservable = 16;
+//  bool require_user_confirm = 17;
+//  int32 distance = 18;
+//  int32 number_of_stop = 19;
+//  bool is_charter = 20;
+//  bool is_refundable = 21;
+//  int32 duration_flight = 22;
+//  int32 duration_stop = 23;
+//  int32 max_allowed_baggage = 24;
+//  bool is_red_eye = 25;
+//  bool is_day_cross = 26;
+//  DateTime departure = 27;
+//  DateTime arrival = 28;
+//  repeated Trips trips = 29;
+//  RefundPolicy refund_policy = 30;
+//}
+//
+//message Trips {
+//  string aircraft = 1;
+//  string FlightNumber = 2;
+//  bool is_airport_change = 3;
+//  string flight_class = 4;
+//  string class_type = 5;
+//  string class_type_name = 6;
+//  int32 max_allowed_baggage = 7;
+//  bool is_red_eye = 8;
+//  bool is_day_cross = 9;
+//  int32 duration_flight = 10;
+//  int32 duration_stop = 11;
+//  string airline_logo = 12;
+//  string airline_code = 13;
+//  string airline_name = 14;
+//}
+//
+//message AffiliatesFares{
+//  string type = 1;
+//  float price = 2;
+//  int32 currency = 3;
+//  float discount = 4;
+//  int32 point = 5;
+//  float tax_fee = 6;
+//  float service_tax = 7;
+//}
+//
+//message DateTime {
+//  string code = 1;
+//  string date_time = 2;
+//  string Utc_date_time = 3;
+//  int32 unix_date_time = 4;
+//}
+//
+//message RefundPolicy {
+//  string booking_class = 1;
+//  string airline_code = 2;
+//  bool is_available = 3;
+//  repeated PenaltyRules penalty_rules = 4;
+//}
+//
+//message PenaltyRules {
+//  string by = 1;
+//  float percent = 2;
+//}

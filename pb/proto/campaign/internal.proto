@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package haf80.api.campaign;
+
+option go_package = "micro/pb/proto/campaign;campaign";
+
+
+
+service PaymentComplete {}
+
+

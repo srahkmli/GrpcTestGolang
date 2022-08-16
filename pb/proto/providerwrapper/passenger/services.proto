@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package haf80.api.providerwrapper.passenger;
+
+option go_package = "providerwrapper/api/pb/providerwrapper/passenger;passenger";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/providerwrapper";
+};
+
+
+service Passenger {
+  rpc CreatePassenger (PassengerRequest) returns (PassengerResponse) {
+    option (google.api.http) = {
+      post:"/v1/passenger"
+      body:"*"
+    };
+  }
+
+}
+
+message PassengerRequest {
+  message Name {
+    string FirstName = 1;
+    string LastName = 2;
+    string FirstNameEnglish = 3;
+    string LastNameEnglish = 4;
+    string MiddleName = 5;
+    string Title = 6;
+  }
+
+  message Passport {
+    string Country = 1;
+    string ExpireDate = 2;
+    string IssueDate = 3;
+    string Number = 4;
+  }
+
+  message ContactInfo {
+    string FirstName = 1;
+    string LastName = 2;
+    string Phone = 3;
+    string Mobile = 4;
+    string Email = 5;
+    string Gender = 6;
+  }
+
+
+  message Passengers {
+    string nationalCode = 1;
+    string nationality = 2;
+    string birthPlace = 3;
+    bool   Wheelchair = 4;
+    string Gender = 5;
+    string BirthDate = 6;
+    string PassengerType = 7;
+    string Phone = 8;
+    string Mobile = 9;
+    string Email = 10;
+    Name name = 11;
+    Passport passport = 12;
+  }
+
+  string orderId = 1;
+  string ticketId = 2;
+  ContactInfo Contact = 3;
+  repeated Passengers passenger = 4;
+}
+
+message PassengerResponse {
+  message PassengerContact {
+    string FirstName = 1;
+    string LastName = 2;
+    string Mobile = 3;
+    string Phone = 4;
+    string Email = 5;
+    int32 Gender = 6;
+  }
+
+  message PassengerFare {
+    int32 Price = 1;
+    int32    Currency = 2;
+    float  Discount = 3;
+    int32   Point = 4;
+    float  Tax_Fee = 5;
+    float   ServiceTax = 6;
+    int32 Fare = 7;
+  }
+
+  message Pricing {
+    int32 PassengerType = 1;
+    uint32 Price = 2;
+    string Currency = 3;
+    uint32 Discount = 4;
+    uint32 Tax_Fee = 5;
+    uint32 ServiceTax = 6;
+    uint32 Fare = 7;
+  }
+
+  message Name {
+    string FirstName = 1;
+    string LastName = 2;
+    string FirstNameEnglish = 3;
+    string LastNameEnglish = 4;
+    string MiddleName = 5;
+    int32 Title = 6;
+  }
+
+  message Passport {
+    string Country = 1;
+    string ExpireDate = 2;
+    string IssueDate = 3;
+    string Number = 4;
+  }
+
+  message Options {
+    string OptionID = 1;
+    string OptionName = 2;
+    string ItemID = 3;
+    string ItemName = 4;
+  }
+
+  message Details {
+    string GroupToken = 1;
+    string GroupName = 2;
+    repeated Options Options = 3;
+    PassengerFare Fare = 4;
+  }
+
+  message Passengers {
+    int32 Gender = 1;
+    int32 PassengerType = 2;
+    string BirthDate = 3;
+    string NationalCode = 4;
+    string Nationality = 5;
+    string BirthPlace = 6;
+    bool Wheelchair = 7;
+    Name Name = 8;
+    Passport Passport = 9;
+    PassengerFare Fare = 10;
+    repeated Details Details = 11;
+  }
+  message PassengerItineraries {
+    PassengerFare Fare = 1;
+    repeated Pricing Pricing = 2;
+    repeated Passengers Passengers = 3;
+  }
+
+  string RequestToken = 1;
+  string ExpireDate = 2;
+  PassengerContact Contact = 3;
+  PassengerFare Fare = 4;
+  repeated PassengerItineraries Itineraries = 5;
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package haf80.api.tourism.flightprovider;
+
+option go_package = "tourism/api/pb/flightprovider";
+
+import "tourism/flight-provider/flightlist-messages.proto";
+import "tourism/flight-provider/reserve-messages.proto";
+import "tourism/flight-provider/confirm-order.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/flight-provider";
+};
+
+service FlightProvider {
+  rpc GetFlightList (GetFlightListRequest) returns (google.protobuf.Empty) {}
+
+  rpc Reserve(ReserveRequest) returns (ReserveResponse) {}
+
+  rpc CancelReserve(CancelReserveRequest) returns (google.protobuf.Empty) {}
+
+  rpc ConfirmOrder (ConfirmOrderRequest) returns (ConfirmOrderResponse) {}
+
+  rpc InquireOrder(ConfirmOrderRequest) returns (ConfirmOrderResponse) {}
+}

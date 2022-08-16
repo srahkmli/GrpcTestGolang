@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package haf80.api.providerwrapperdomestic.flight;
+
+option go_package = "providerwrapperdomestic/api/pb/providerwrapperdomestic/flight;flight";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/providerwrapperdomestic";
+};
+
+service Flight {
+
+  rpc FlightListsToward (FlightListsRequest) returns (FlightListsResponse) {
+    option (google.api.http) = {
+      post:"/api/v1/flights/toward"
+      body:"*"
+    };
+  }
+
+  rpc FlightListsBackward(FlightListsRequest) returns (FlightListsResponse) {
+    option (google.api.http) = {
+      post:"/api/v1/flights/backward"
+      body:"*"
+    };
+  }
+
+  rpc FlightDetail(FlightDetailRequest) returns (FlightDetailResponse) {
+    option (google.api.http) = {
+      post:"/api/v1/flights/detail"
+      body:"*"
+    };
+  }
+
+}
+
+message Itineraries {
+  string departure = 1;
+  string arrival = 2;
+  string date = 3;
+}
+
+message FlightListsRequest {
+  string requestId = 1;
+  uint32 adultCount = 2;
+  uint32 childCount = 3;
+  uint32 infantCount = 4;
+  repeated Itineraries Itineraries = 5;
+}
+
+message FlightListsResponse {
+  uint32 status = 1;
+  string data = 2;
+}
+
+message FlightDetailRequest {
+  string ticketId = 1;
+}
+
+message FlightDetailResponse {
+  message Items {
+    string Key = 1;
+    string Value = 2;
+  }
+
+  message Rules {
+    string Pattern = 1;
+    string Key = 2;
+    repeated Items Items = 3;
+  }
+
+  message Terms {
+    string Key = 1;
+    string Title = 2;
+    repeated Rules Rules = 3;
+  }
+
+  message FlightDetailItem {
+    string Description = 1;
+    repeated Terms Terms = 2;
+  }
+
+  FlightDetailItem data = 1;
+  uint32 status = 2;
+}

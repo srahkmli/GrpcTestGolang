@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package haf80.api.tourism.flightprovider;
+
+option go_package = "tourism/api/pb/flightprovider";
+
+message GetFlightListRequest {
+    repeated FlightListQuery query = 1;
+    string request_id = 2;
+}
+
+message FlightListQuery {
+    string origin_iata = 2;
+    string destination_iata = 3;
+    PassengerCount passenger = 4;
+    string departure_date = 5;
+}
+
+message PassengerCount {
+    uint32 adult_count = 1;
+    uint32 child_count = 2;
+    uint32 infant_count = 3;
+}

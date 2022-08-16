@@ -1,0 +1,448 @@
+syntax = "proto3";
+
+package haf80.api.bankcard;
+
+option go_package = "micro/pb/proto/bankcard;bankcard";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/bankcard";
+  security_definitions: {
+    security: {
+      key: "bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+        description: "Authentication token, prefixed by Bearer: Bearer <token>"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "bearer"
+    }
+  }
+};
+
+
+service CardManagement {
+  // get all origin cards 
+  rpc GetOrigin (google.protobuf.Empty) returns (haf80.api.bankcard.OriginClientCardResponse) {
+    option (google.api.http) = {
+      get: "/v1/origin/cards"
+    };
+  }
+
+  // add new origin card
+  rpc AddOrigin (haf80.api.bankcard.OriginCardRequest) returns (haf80.api.bankcard.OriginCardMessage) {
+    option (google.api.http) = {
+      post: "/v1/origin/cards",
+      body:"*"
+    };
+  }
+
+  // update origin card
+  rpc UpdateOrigin (haf80.api.bankcard.OriginCardUpdateRequest) returns (haf80.api.bankcard.Response) {
+    option (google.api.http) = {
+      patch: "/v1/origin/cards/{id}"
+      body: "*"
+    };
+  }
+
+  // delete origin card
+  rpc DeleteOrigin (haf80.api.bankcard.DeleteCardRequest) returns (haf80.api.bankcard.Response) {
+    option (google.api.http) = {
+      delete: "/v1/origin/cards/{id}"
+    };
+  }
+
+
+  // get all destination cards
+  rpc GetDestination (google.protobuf.Empty) returns (haf80.api.bankcard.DestinationClientCardResponse) {
+    option (google.api.http) = {
+      get: "/v1/destination/cards"
+    };
+  }
+
+  // add new origin card
+  rpc AddDestination (haf80.api.bankcard.AddDestinationCardRequest) returns (haf80.api.bankcard.DestinationCardMessage) {
+    option (google.api.http) = {
+      post: "/v1/destination/cards",
+      body: "*"
+    };
+  }
+
+  // update destination card
+  rpc UpdateDestination (haf80.api.bankcard.DestinationCardUpdateRequest) returns (haf80.api.bankcard.Response) {
+    option (google.api.http) = {
+      patch: "/v1/destination/cards/{id}"
+      body: "*"
+    };
+  }
+
+  // delete destination card
+  rpc DeleteDestination (haf80.api.bankcard.DeleteCardRequest) returns (haf80.api.bankcard.Response) {
+    option (google.api.http) = {
+      delete: "/v1/destination/cards/{id}"
+    };
+  }
+
+  // AppReactivation get a link and activate app with that link
+  rpc AppReactivation (google.protobuf.Empty) returns (haf80.api.bankcard.AppReactivationResponse) {
+    option (google.api.http) = {
+      post: "/v1/app/reactivation"
+      body: "*"
+    };
+  }
+
+  // CheckCardStatus check card and if it need, return a link to register card
+  rpc CheckCardStatus (haf80.api.bankcard.CheckCardRequest) returns (haf80.api.bankcard.CheckCardResponse) {
+    option (google.api.http) = {
+      post: "/v1/app/check-card"
+      body: "*"
+    };
+  }
+  // activate inserted hub cards
+  rpc ActivateHub (haf80.api.bankcard.ActivateHubRequest) returns (haf80.api.bankcard.Response) {
+    option (google.api.http) = {
+      post: "/v1/app/activate-hub"
+      body: "*"
+    };
+  }
+}
+
+message ActivateHubRequest {
+  string cardId = 1;
+  string transactionId = 2;
+}
+
+message DeleteCardRequest{
+  string id = 1;
+}
+
+
+message Bank {
+  enum bankEnum {
+    unknown = 0;
+    saman = 1;
+    ansar = 2;
+    ayande = 3;
+    day = 4;
+    eghtesadeNovin = 5;
+    ghavamin = 6;
+    hekmatIranian = 7;
+    iranzamin = 8;
+    keshavarzi = 9;
+    mehrEghtesad = 10;
+    melal = 11;
+    mellat = 12;
+    nor =13;
+    parsian = 14;
+    pasargad = 15;
+    postbank = 16;
+    refah =17;
+    sarmayeh = 18;
+    sepah = 19;
+    shahr = 20;
+    sina = 21;
+    tejarat = 22;
+    bmi = 23;
+    khavarmianeh = 24;
+    toseeSaderat = 25;
+    sanaatoMadan = 26;
+    toseeTaavon = 27;
+    saderat = 28;
+    resalat = 29;
+    mehrIran = 30;
+    karafarin = 31;
+    gardeshgari = 32;
+    maskan = 33;
+    kosar = 34;
+    blu = 35;
+  }
+}
+
+// add origin card after payment
+message OriginCardRequest{
+  string clearCard = 1;
+  string name = 2;
+  uint32 year = 3;
+  uint32 month = 4;
+  google.protobuf.BoolValue isPined = 5;
+  Bank.bankEnum bank = 6;
+  string transactionId = 7;
+}
+
+message OriginCardUpdateRequest{
+  string id = 1;
+  string name = 2;
+  uint32 year = 3;
+  uint32 month = 4;
+  google.protobuf.BoolValue isPined = 5;
+}
+
+message OriginCardMessage {
+  string id = 1;
+  string mask = 2;
+  string name = 3;
+  uint32 year = 4;
+  uint32 month = 5;
+  bool isPined = 6;
+  string bank = 7;
+  string pan = 8;
+  bool isHub = 9;
+}
+
+message DestinationCardMessage {
+  string id = 1;
+  string mask = 2;
+  string name = 3;
+  bool isPined = 4;
+  string bank = 5;
+}
+
+message AddDestinationCardRequest{
+  string clearCard = 1;
+  string name = 2;
+  google.protobuf.BoolValue isPined = 3;
+  Bank.bankEnum bank = 4;
+}
+
+message DestinationCardUpdateRequest {
+  string id = 1;
+  google.protobuf.BoolValue isPined = 2;
+}
+
+message OriginClientCardResponse {
+  repeated OriginCardMessage data = 1;
+}
+
+message DestinationClientCardResponse {
+  repeated DestinationCardMessage data = 1;
+}
+
+message Response {
+  string message = 1;
+}
+
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.bankcard.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.bankcard.Error) returns (haf80.api.bankcard.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.bankcard.CreateErrorRequest) returns (haf80.api.bankcard.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+}
+
+service CardActions {
+  // InitialTransaction initial a transaction
+  rpc InitialTransfer (haf80.api.bankcard.InitialTransferRequest) returns (haf80.api.bankcard.InitialTransferResponse) {
+    option (google.api.http) = {
+      post: "/v1/card-actions/transfer/initial"
+      body: "*"
+    };
+  }
+  // RequestTransferOTP request otp code for transfer
+  rpc RequestTransferOTP (haf80.api.bankcard.TransferOTPRequest) returns (haf80.api.bankcard.OTPResponse) {
+    option (google.api.http) = {
+      post: "/v1/card-actions/transfer/otp"
+      body: "*"
+    };
+  }
+  // Transfer card to card transfer
+  rpc Transfer (haf80.api.bankcard.TransferRequest) returns (haf80.api.bankcard.TransferResponse) {
+    option (google.api.http) = {
+      post: "/v1/card-actions/transfer/complete"
+      body: "*"
+    };
+  }
+  // Authorize a card number, return card owner and authorize reference number
+  rpc Authorize (haf80.api.bankcard.AuthorizeRequest) returns (haf80.api.bankcard.AuthorizeRespones) {
+    option (google.api.http) = {
+      post: "/v1/card-actions/authorize"
+      body: "*"
+    };
+  }
+  // Inquiry a cards balance
+  rpc Inquiry (haf80.api.bankcard.InquiryRequest) returns (haf80.api.bankcard.InquiryResponse) {
+    option (google.api.http) = {
+      post: "/v1/card-actions/inquiry"
+      body: "*"
+    };
+  }
+  // RequestInquiryOTP request otp code for Inquiry
+  rpc RequestInquiryOTP (haf80.api.bankcard.InquiryOTPRequest) returns (haf80.api.bankcard.OTPResponse) {
+    option (google.api.http) = {
+      post: "/v1/card-actions/inquiry/otp"
+      body: "*"
+    };
+  }
+}
+
+service TransferHistory {
+  // GetTransferStatus get a transfers detail
+  rpc GetTransferStatus (haf80.api.bankcard.TransferStatusRequest) returns (haf80.api.bankcard.TransferStatusResponse) {
+    option (google.api.http) = {
+      get: "/v1/history/{transferId}"
+    };
+  }
+  // GetTransferStatus get a transfers detail default limit will be 10
+  rpc GetTransfers (haf80.api.bankcard.TransfersHistoryRequest) returns (haf80.api.bankcard.TransferHistoryResponse) {
+    option (google.api.http) = {
+      get: "/v1/history"
+    };
+  }
+}
+
+message TransferStatusRequest {
+  string transferId = 1;
+}
+
+message TransferStatusResponse {
+  string transferId = 1;
+  string originCard = 2;
+  string destinationCard = 3;
+  int64 amount = 4;
+  string referenceNumber = 8;
+  string transferDateTime = 6;
+  string status  = 5;
+  string description = 7;
+}
+
+message TransfersHistoryRequest {
+  uint32 limit = 1;
+  uint32 offset = 2;
+}
+
+message TransferHistoryResponse {
+  int32 count = 1;
+  uint32 limit = 2;
+  uint32 offset = 3;
+  repeated TransferStatusResponse data = 4;
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  uint32 serviceCode = 6;
+  string status = 7;
+  string description = 8;
+}
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string status = 6;
+  string description = 7;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+message AuthorizeRequest {
+  string clearCard = 1;
+}
+
+message AuthorizeRespones {
+  string cardOwner = 1;
+  string authorizeReferenceNumber = 2;
+}
+
+message InquiryRequest {
+  string originId = 1;
+  string cvv2 = 2;
+  string pin = 3;
+}
+
+message InquiryResponse {
+  int64 actualBalance = 1;
+  int64 availableBalance = 2;
+}
+
+message TransferRequest {
+  string transferId = 1;
+  string cvv2 = 2;
+  string pin = 3;
+  string description = 4;
+}
+
+message TransferOTPRequest {
+  string transferId = 1;
+}
+
+message InquiryOTPRequest {
+  string originCardId = 1;
+}
+
+message OTPResponse {
+  string requestId = 1;
+}
+
+message TransferResponse {
+  string referenceNumber = 1;
+}
+
+message AppReactivationResponse {
+  string registrationLink = 1;
+  string transactionId = 2;
+}
+
+message CheckCardRequest {
+  string iin = 1;
+}
+
+message CheckCardResponse {
+  string registerationLink = 1;
+  string transactionId = 2;
+  bool doNeedRegistration = 3;
+}
+
+message InitialTransferRequest {
+  string originCardId = 1;
+  string destinationCardId = 2;
+  string destinationClearCard = 3;
+  int64 amount = 4;
+}
+
+message InitialTransferResponse {
+  string cardOwner = 1;
+  string transferId = 2;
+  string destinationClearCard = 3;
+}

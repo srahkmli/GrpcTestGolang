@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package haf80.api.tourism.flightprovider;
+
+import "tourism/flight-provider/name.proto";
+import "tourism/flight-provider/flightinfo.proto";
+
+option go_package = "tourism/api/pb/flightprovider";
+
+message ReserveRequest {
+  repeated string flight_ids = 1;
+  string order_id = 2;
+  repeated Passenger passengers = 3;
+}
+
+message Passenger {
+  string national_code = 1;
+  string nationality = 2;
+  string gender = 3;
+  string passenger_type = 4;
+  string birth_date = 5;
+  Name first_name = 6;
+  Name last_name = 7;
+  Passport passport = 8;
+  AgeType age_type = 9;
+  string passenger_id =10;
+}
+
+enum AgeType {
+  AGE_TYPE_UNDEFINED = 0;
+  AGE_TYPE_ADULT = 1;
+  AGE_TYPE_CHILD = 2;
+  AGE_TYPE_INFANT = 3;
+}
+message Passport {
+  string country = 1;
+  string expire_date = 2;
+  string issue_date = 3;
+  string number = 4;
+}
+
+message ReserveResponse {
+  string order_id = 1;
+  string expire_date = 2;
+  repeated Flights flights = 3;
+  PaymentInfo payment = 4;
+}
+
+message Flights {
+  FlightInfo flightinfo = 1;
+  repeated Ticket tickets = 2;
+  string pnr = 3;
+}
+
+message PaymentInfo {
+  uint64 total_price = 1;
+  uint64 discount = 2;
+  uint64 tax_fee = 3;
+  uint64 service_tax = 4;
+  uint64 fare = 5;
+}
+
+message Ticket {
+  TicketPayment payment = 1;
+  Passenger passenger = 2;
+}
+
+message TicketPayment {
+  uint64 price = 1;
+  uint64 tax = 2;
+  uint64 total_price =3;
+}
+
+message CancelReserveRequest {
+  string order_id = 1;
+}

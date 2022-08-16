@@ -1,0 +1,7 @@
+make: Entering directory '/home/srahkmli/Documents/780/testGrpc'
+make submodule
+make proto
+make config
+make gitlab
+make: Leaving directory '/home/srahkmli/Documents/780/testGrpc'
+ 

@@ -1,0 +1,598 @@
+syntax = "proto3";
+
+
+package haf80.api.profile;
+
+option go_package = "micro/api/pb/profile;profile";
+
+// import "google/api/httpbody.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "google/protobuf/timestamp.proto";
+// import "profile/role/enums.proto";
+
+service Admin {
+  // login service
+  rpc Login (haf80.api.profile.AdminLoginRequest) returns (haf80.api.profile.AdminLoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/profile/admin/login"
+      body: "*"
+    };
+  }
+
+  rpc Register (haf80.api.profile.UserRegisterRequest) returns (haf80.api.profile.UserRegisterResponse) {
+    option (google.api.http) = {
+      post: "/v1/profile/admin/register"
+      body: "*"
+    };
+  }
+}
+
+service User {
+  // // login service
+  // rpc Login (haf80.api.profile.UserLoginRequest) returns (haf80.api.profile.TOTPResponse) {
+  //   option (google.api.http) = {
+  //     post: "/v1/user/profile/user/login"
+  //     body: "*"
+  //   };
+  // }
+
+  rpc GetTOTP (haf80.api.profile.TOTPRequest) returns (haf80.api.profile.TOTPResponse) {
+    option (google.api.http) = {
+      post: "/v1/profile/totp/new"
+      body: "*"
+    };
+  }
+  
+  rpc VerifyTOTP (haf80.api.profile.UserRegisterRequest) returns (haf80.api.profile.UserRegisterResponse) {
+    option (google.api.http) = {
+      post: "/v1/profile/totp/verify"
+      body: "*"
+    };
+  }  
+
+  rpc RefreshToken (google.protobuf.Empty) returns (haf80.api.profile.RefreshResponse) {
+    option (google.api.http) = {
+      post: "/v1/profile/token/refresh"
+      body: "*"
+    };
+  }
+
+  rpc ExchangeFederatedToken(haf80.api.profile.AuthRequest) returns (haf80.api.profile.AuthResponse) {
+    option (google.api.http) = {
+      post: "/v1/profile/token/exchange"
+      body: "*"
+      };
+  }
+
+  rpc CheckUser (haf80.api.profile.CheckUserRequest) returns (haf80.api.profile.CheckUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/profile/check"
+      body: "*"
+    };
+  }  
+}
+
+enum TokenType {
+  ORAToken = 0;
+  JWTToken = 1;
+}
+
+message TOTPRequest {
+  string mobileNo = 1;
+}
+
+message TOTPResponse{
+  string reference = 1;
+}
+
+message UserRegisterRequest {
+  string mobileNo = 1;
+  string otpCode = 2;
+}
+
+message UserRegisterResponse {
+  string token = 1;
+  string refreshToken = 2;
+}
+
+message RefreshResponse {
+  string token = 1;
+}
+
+message CheckUserRequest {
+  string ora_token = 1;
+}
+
+message CheckUserResponse {
+  string jwt_token = 1;
+}
+
+message AdminLoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+// message RegisterUserRequest {
+message UserLoginRequest {
+  string username = 1;
+  string password = 2;
+  int32 nationality = 3;
+  // haf80.api.profile.Gender gender = 4;
+  string nid = 5;
+  google.protobuf.Timestamp dob = 6;
+}
+
+// message RegistrationResponse {
+message  AdminLoginResponse  {
+    int32 status = 1;
+    string sub = 2;
+}
+
+message AuthRequest {
+  string ORAToken = 1;
+  string OAuthToken = 2;
+}
+
+message AuthResponse {
+  bytes sub = 1; // sub, according to oauth is the subject the user bears in our system
+  bytes jti = 2; // token id, the uuid we store in our db . rfc7519
+
+  // mobile number in msisdn-den format: CC + NDC + SN
+  // CC = Country Code
+  // NDC = National Destination Code, identifies one or part of a PLMN
+  // SN = Subscriber Number
+  string msisdn = 3;
+}
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+service Club {
+  rpc Campaign(haf80.api.profile.CampaignRequest) returns (haf80.api.profile.CampaignResponse) {
+    option (google.api.http) = {
+      get: "/v1/profile/campaign"
+    };
+  }
+
+  // rpc Answer(haf80.api.profile.AnswerRequest) returns (haf80.api.profile.AnswerResponse) {
+  //   option (google.api.http) = {
+  //     post: "/v1/campaign/answer",
+  //     body:"*"
+  //   };
+  // }
+
+  rpc Point (google.protobuf.Empty) returns (haf80.api.profile.Points) {
+      option (google.api.http) = {
+          get: "/v1/profile/club/point"
+          // body: "*"
+      };
+  }
+
+  rpc PostChance (haf80.api.profile.PostChanceRequest) returns (haf80.api.profile.PostChanceResponse) {
+      option (google.api.http) = {
+          post: "/v1/profile/club/chance/{lcode}"
+          body: "*"
+      };
+  }
+
+  rpc GetChance (haf80.api.profile.ChanceRequest) returns (haf80.api.profile.ChanceResponse) {
+      option (google.api.http) = {
+          get: "/v1/profile/club/chance/{lcode}"
+      };
+  }
+
+  rpc CountChance (haf80.api.profile.ChanceRequest) returns (haf80.api.profile.CountChanceResponse) {
+      option (google.api.http) = {
+          get: "/v1/profile/club/chance/{lcode}/count"            
+      };
+  }
+}
+
+message Points {
+  int32 points = 1;
+}
+
+message PostChanceRequest {
+  int32 lcode = 1;
+  string userData = 2;
+}
+
+message PostChanceResponse {
+  string message = 1;
+}
+
+message ChanceRequest {
+  int32 lcode = 1;
+}
+
+message ChanceResponse {
+  repeated int64 chanceCode = 2;
+  string message  = 3;
+}
+
+message CountChanceResponse {
+  int32 count = 1;
+}
+
+message CampaignPage {
+  string index = 1;
+  string value = 2;
+  string short_desc = 3;
+  string Url_icon = 4;
+  string download_url = 5;
+  string next_page_type = 6;
+  string next_page_code = 7;
+  string add_data = 8;
+}
+
+message CampaignRequest {
+  string token = 1;
+  string page_type = 2;
+  string page_code = 3;
+  string user_data = 4;
+}
+
+message CampaignResponse {
+  string page_type = 1;
+  string page_code = 2;
+  string ShortDesc = 3;
+  string desc = 4;
+  string background_url = 5;
+  string downloading_url = 6;
+  string icon_url = 7;
+  string score = 8;
+  string award = 9;
+  repeated CampaignPage list = 10;
+}
+
+// message AnswerRequest {
+//   string mobile = 1;
+//   string lottery_code = 2;
+//   string short_code = 3;
+// }
+
+// message AnswerResponse {
+//   string message = 1;
+// }
+
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+service Bills {
+  rpc AddBill (haf80.api.profile.Bill) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/v1/profile/bill/new"
+      body: "*"
+    };
+  }
+
+  rpc ListBills (google.protobuf.Empty) returns (stream haf80.api.profile.Bill) {
+    option (google.api.http) = {
+      post: "/v1/profile/bill/list"
+      body: "*"
+    };
+  }
+
+  rpc EditBill (haf80.api.profile.Bill) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/profile/bill/edit"
+      body: "*"
+    };
+  }
+}
+
+enum BillTypes {
+  UNSPECIFIED = 0;
+  WATER = 1;
+  ELECTRICITY = 2;
+  GAS = 3;
+  LANDLINE =4;
+  MOBILE =5;
+  MUNICIPALITY =6;
+  // IRS : tax and 
+  TAX =7;
+  DRIVING_FINES = 8;
+}
+
+enum BillIdentity {
+  PhoneNo = 0;
+  MobileNo = 1;
+  SubscriptionCode = 2;
+}
+
+message Bill {
+  uint64 Id = 1;
+  reserved 2;
+  // bytes Sub = 2;
+  string BillID = 3;
+  string PayID = 4;
+  haf80.api.profile.BillTypes Type = 5;
+  haf80.api.profile.BillIdentity Identity = 6;
+  string IdentityValue = 7;
+  int32 Status = 8;
+  string Image = 9;
+}
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+service Cars {
+  rpc AddCar (haf80.api.profile.Car) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+        put: "/v1/profile/car/new"
+        body: "*"
+    };
+  }
+
+  rpc ListCars (google.protobuf.Empty) returns (stream haf80.api.profile.Car) {
+    option (google.api.http) = {
+      post: "/v1/profile/car/list"
+      body: "*"
+    };
+  }
+
+  rpc EditCar (haf80.api.profile.Car) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/profile/car/edit"
+      body: "*"
+    };
+  }
+}
+
+
+message Car {
+  uint64 Id = 1;
+  reserved 2;
+  // bytes Sub = 2;
+  string VIN = 3;
+  string Barcode = 4;
+  string Body = 5;
+  int32 AreaCode = 6;
+  int32 Status = 7;
+}
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+enum Status {
+  Unknown = 0;
+  Active = 1;
+  Suspend = 2;
+  Blocked = 3;
+  Confiscated = 4;
+}
+
+enum Bank {
+  Saderat = 0;
+  Melli = 1;
+  Mellat = 2;
+  Saman = 3;
+  Tejarat = 4;
+  Pasargad = 5;
+  Parsian = 6;
+  reserved 7 to 30;
+}
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+service Affiliates {
+  rpc AddAffiliate (haf80.api.profile.Affiliate) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+        put: "/v1/profile/affiliate/new"
+        body: "*"
+    };
+  }
+
+  rpc ListAffiliates (google.protobuf.Empty) returns (stream haf80.api.profile.Affiliate) {
+    option (google.api.http) = {
+      post: "/v1/profile/affiliate/list"
+      body: "*"
+    };
+  }
+
+  rpc EditAffiliate (haf80.api.profile.Affiliate) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      patch: "/v1/profile/affiliate/edit"
+      body: "*"
+    };
+  }
+
+}
+
+message Affiliate {
+  uint64 Id = 1;
+  reserved 2;
+  // bytes Sub = 2;
+  uint32 Domain = 3;
+  Cellphone Cellphone = 4;
+  string DisplayName = 5;
+  uint32 Operator = 6;
+  int32 Status = 7;
+}
+
+message Cellphone {
+  string MSISDN = 2;
+  uint32 Operator = 3;
+  bool Prepaid = 4;
+  int32 Status = 5;
+}
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+service Profile {
+  // add role
+  rpc AddRole (haf80.api.profile.Role) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/profile/role/new"
+    };
+  }
+
+  // edit role
+  rpc EditRole (haf80.api.profile.Role) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/profile/role/edit"
+    };
+  }
+
+// list roles
+  rpc ListRoles (google.protobuf.Empty) returns (stream haf80.api.profile.RolesListResponse) {
+    option (google.api.http) = {
+      get: "/v1/profile/role/list"
+    };
+  }
+}
+
+
+enum VerificationStatus {
+  Pending = 0;
+  CellphoneVerified = 1;
+}
+
+enum AccountStatus {
+  Created = 0;
+  Enabled = 1;
+  Disabled = 2;
+  TemporaryBlocked = 3;
+  PermanentlyBlocked = 4;
+  AccountRemoved = 5;
+}
+
+enum AccountType {
+  Card = 0;
+  IBAN = 1;
+}
+
+enum Gender {
+  Undisclosed = 0;
+  Male = 1;
+  Female = 2;
+}
+
+enum Permissions {
+  API_SEE_BUS_TICKETS = 0;  
+}
+
+
+message AddRoleRequest {
+  string title = 1;
+  reserved  2;
+  repeated int32 permissions = 3;
+}
+
+
+message RolesListRequest {
+  string userName = 1;
+  int32 userId = 2;
+}
+
+message RolesListResponse {
+  repeated Role roles = 1;
+  repeated Permission permissions = 2;
+}
+
+message Role {
+  int32 id = 1;
+  string title = 2;
+  bool status = 3;
+  repeated Permission permissions = 4;
+}
+
+message Permission {
+  int32 id = 1;
+  string name = 2;
+}
+
+message PointRequest{
+  string mobile = 1;
+}
+
+message PointResponse{
+  string point = 1;
+}
+
+message ProfileInfoRequest{
+  string username = 1;
+}
+
+message ProfileInfoResponse{
+  int64 id = 1;
+}
+
+//--------------------------------------------------------------------------------------------------------------------------
+
+
+// Here is the overall greeting service definition where we define all our endpoints
+service Banking {
+
+  rpc ListAccounts (haf80.api.profile.ListAccountsRequest) returns (haf80.api.profile.ListAccountsResponse) {
+    option (google.api.http) = {
+      post: "/v1/bank/acounts/list"
+      body: "*"
+    };
+  }
+
+  rpc NewAccount (haf80.api.profile.Account) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/v1/bank/acounts"
+      body: "*"
+    };
+  }
+
+  rpc EditAccount (haf80.api.profile.Account) returns (haf80.api.profile.Account) {
+      option (google.api.http) = {
+        delete: "/v1/bank/acounts"
+      };
+    }
+
+    rpc DeleteAccount (haf80.api.profile.Account) returns (google.protobuf.Empty) {
+      option (google.api.http) = {
+        delete: "/v1/bank/acounts"
+
+      };
+    }
+  }
+
+  // AccountStatus  
+enum AccountStaus {
+  Personal = 0;
+  Others   = 1;
+}
+
+
+message AccountDetail {
+  string CardNo = 1;
+  string Iban = 2;
+  string AccountNo = 3;
+  string ExpiryDate = 4;
+}
+
+message Account {
+string Holder = 1;
+AccountDetail Details =2;
+Bank Bank = 3;
+}
+
+message AccountOwner {
+string Holder = 1;
+}
+
+message ListAccountsRequest {
+AccountOwner Owner =1;
+}
+
+message ListAccountsResponse {
+repeated Account Accounts =1;
+}
+
+
+
+message Receipt{
+string response = 1;
+}
+
+
+
+
+
+
+
+

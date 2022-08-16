@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package MobileService;
+
+
+option go_package = "/MobileService";
+
+service MobileService {
+  rpc GetMobileParam(MobileParamRequest) returns (MobileParamResponse) {}
+  rpc UpdateLangDB(UpdateLangRequest) returns (UpdateLangResponse) {}
+  rpc InsertMobileList(InsertMobileListRequest) returns (InsertMobileListResponse) {}
+  rpc DeleteMobileList(DeleteMobileListRequest) returns (DeleteMobileListResponse) {}
+  rpc GetMobileList(GetMobileListRequest) returns (GetMobileListResponse) {}
+  rpc GetMobileInfo(MobileInfoRequest) returns (MobileInfoResponse) {}
+  rpc UseMobilePoint(UseMobilePointsRequest) returns (UseMobilePointsResponse) {}
+  rpc UseMobilePointsInDB(UseMobilePointsInDBRequest) returns (UseMobilePointsInDBResponse) {}
+}
+
+message MobileParamRequest {
+  string    mobile_no = 1;
+}
+
+message MobileParamResponse {
+  int64     points = 1;
+  int64     wallet_blnc = 2;
+  int64     topup_amount = 3;
+  int32     lang_id = 4;
+  string    account_id = 5;
+  string    default_adv_str = 6;
+}
+
+message UpdateLangRequest {
+  string mobile_no = 1;
+  int32  lang_id = 2;
+}
+message UpdateLangResponse {
+
+}
+
+message UseMobilePointsInDBRequest {
+  string mobile_no = 1;
+  int64 amount = 2;
+  int64 trace_no = 3;
+  int32 is_dec = 4;
+  string shop_data = 5;
+  string adv_id = 6;
+}
+message UseMobilePointsInDBResponse {
+  string msg_out = 1;
+}
+
+message InsertMobileListRequest {
+  string mobile_no = 1;
+  string list_name = 2;
+  string value = 3;
+  string account_id = 4;
+}
+message InsertMobileListResponse {
+
+}
+
+message DeleteMobileListRequest {
+  string mobile_no = 1;
+  string list_name = 2;
+}
+message DeleteMobileListResponse {
+
+}
+
+message GetMobileListRequest {
+  string mobile_no = 1;
+  string list_name = 2;
+  string filter = 3;
+  string account_id = 4;
+  int32 lang_id = 5;
+}
+
+message GetMobileListResponse {
+  int32 item_per_page = 1;
+  repeated ItemListStructure item_list = 2 [packed=false];
+}
+
+message ItemListStructure {
+  int32 ix = 1;
+  string name = 2;
+  string value = 3;
+  string add_value = 4;
+  string add_value2 = 5;
+}
+
+message MobileInfoRequest {
+  string mobile_no = 1;
+}
+
+message MobileInfoResponse {
+  int64 points = 1;
+  int64 wallet_blnv = 2;
+  int64 total_points = 3;
+  int64 topup_amount = 4;
+}
+
+
+message UseMobilePointsRequest {
+  string mobile_no = 1;
+  int64 amount = 2;
+  int64 trace_no = 3;
+  int32 is_dec = 4;
+}
+message UseMobilePointsResponse {
+  string msg_out = 1;
+}
+

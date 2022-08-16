@@ -1,0 +1,273 @@
+syntax = "proto3";
+
+package haf80.api.charge;
+
+option go_package = "micro/pb/proto/charge;charge";
+
+// import "google/api/httpbody.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/recharge";
+  security_definitions: {
+    security: {
+      key: "bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+        description: "Authentication token, prefixed by Bearer: Bearer <token>"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "bearer"
+    }
+  }
+};
+
+service Product{
+  // get service and return types for this service
+  rpc Type (haf80.api.charge.TypeRequest) returns (haf80.api.charge.TypeResponse) {
+    option (google.api.http) = {
+      post: "/v1/product/type"
+      body: "*"
+    };
+  }
+
+  // get service and Type and return  prices
+  rpc Package (haf80.api.charge.PackageRequest) returns (haf80.api.charge.PackageResponse) {
+    option (google.api.http) = {
+      post: "/v1/product/package"
+      body: "*"
+    };
+  }
+
+  
+  // get all values for generate order
+  rpc Order (haf80.api.charge.OrderRequest) returns (haf80.api.charge.OrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/product/order"
+      body: "*"
+    };
+  }
+
+  
+  // get all pin charges
+  rpc PinCharge (google.protobuf.Empty) returns (haf80.api.charge.PinChargeResponse) {
+    option (google.api.http) = {
+      get: "/v1/product/pin"
+    };
+  }
+}
+
+service Contacts {
+
+  // add new contact
+  rpc Create (haf80.api.charge.ContactCreateRequest) returns (haf80.api.charge.ContactSuccessCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/contacts"
+      body: "*"
+    };
+  }
+
+  // get users all contacts
+  rpc List (google.protobuf.Empty) returns (haf80.api.charge.ContactResponse) {
+    option (google.api.http) = {
+      get: "/v1/contacts"
+    };
+  }
+
+  // update a contact
+  rpc Update (haf80.api.charge.ContactUpdateRequest) returns (haf80.api.charge.ContactSuccessResponse) {
+    option (google.api.http) = {
+      patch: "/v1/contacts/{id}"
+      body: "*"
+    };
+  }
+
+  // delete a contact
+  rpc Delete (haf80.api.charge.ContactActionRequest) returns (haf80.api.charge.ContactSuccessResponse) {
+    option (google.api.http) = {
+      delete: "/v1/contacts/{contactId}"
+    };
+  }
+}
+
+
+service Admin {
+  // Get the all errors
+  rpc GetErrors (google.protobuf.Empty) returns (haf80.api.charge.ErrorListResponse) {
+    option (google.api.http) = {
+      get: "/v1/admin/error/list"
+    };
+  }
+  // update the error for specific user ID
+  rpc UpdateError (haf80.api.charge.Error) returns (haf80.api.charge.ErrorUpdateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/update"
+      body: "*"
+    };
+  }
+  // Create the error for specific user ID
+  rpc CreateError (haf80.api.charge.CreateErrorRequest) returns (haf80.api.charge.ErrorCreateResponse) {
+    option (google.api.http) = {
+      post: "/v1/admin/error/create"
+      body: "*"
+    };
+  }
+}
+
+message Service {
+  enum serviceEnum {
+    unknown = 0;
+    irancell = 1;
+    mci = 2;
+    rightel = 3;
+    shatel = 4;
+  };
+}
+
+message Error {
+  int32  id = 1;
+  string message = 2;
+  string lang = 3;
+  uint32 httpCode = 4;
+  int32  code = 5;
+  uint32 serviceCode = 6;
+  string status = 7;
+}
+
+message ContactActionRequest {
+  string contactId = 1;
+}
+
+
+message CreateErrorRequest {
+  string message = 1;
+  string lang = 2;
+  uint32 httpCode = 3;
+  int32  code = 4;
+  uint32 serviceCode = 5;
+  string status = 6;
+}
+
+message ErrorListResponse {
+  uint32 code = 1;
+  string message = 2;
+  repeated Error data = 3;
+}
+message ErrorUpdateResponse {
+  uint32 code = 1;
+  string message = 2;
+}
+message ErrorCreateResponse{
+  uint32 code = 1;
+  string message = 2;
+}
+
+message TypeRequest{
+  Service.serviceEnum service = 1;
+}
+
+message TypeResponse{
+  message Charge {
+    string name = 1;
+    string method = 2;
+  }
+  repeated Charge data = 1;
+}
+
+message PackageRequest{
+  Service.serviceEnum service = 1;
+  string method = 2;
+}
+
+message PackageResponse{
+  uint32 serviceId = 1;
+  message Package {
+    string name = 1;
+    int32 price = 2;
+  }
+  repeated Package data = 2;
+}
+
+message OrderRequest{
+  string phone = 1;
+  Service.serviceEnum service = 2;
+  string method = 3;
+  int32  price = 4;
+  string paymentType = 5;
+}
+
+message OrderResponse{
+  uint32 serviceId = 1;
+  string orderId = 2;
+  uint32 price = 3;
+}
+
+message ChargeRequest{
+  string order = 1;   // generated token by charge service
+  string rrn = 2;     // bank rrn code
+  int32  price = 3;   // price
+}
+message ChargeResponse{
+  string message = 1; // response message
+  string tid = 2;     // code for charge tracking
+  string pin = 3;     // if user want a pin code
+  string serial = 4;  // serial number for every charge response 
+  string data = 5;    // if provider has more data
+}
+
+message PinChargeResponse{
+  repeated string data = 1;
+}
+
+message ContactUpdateRequest {
+  string id = 1;
+  string name = 2;
+  string phone = 3;
+  Service.serviceEnum service = 4;
+  uint32 packageId = 5; 
+  google.protobuf.BoolValue isPined = 6;
+}
+
+message ContactCreateRequest {
+  string name = 1;
+  string phone = 2;
+  Service.serviceEnum service = 3;
+  uint32 packageId = 4; 
+  bool isPined = 5;
+}
+
+message ContactResponse {
+  message Phone {
+    string id = 1;
+    string phone = 2;
+    string service = 3;
+    string name = 4;
+    bool isPined = 5;
+  }
+  repeated Phone data = 2;
+}
+
+message ContactSuccessResponse {
+  string message = 1;
+}
+
+message ContactSuccessCreateResponse {
+  message Phone {
+    string id = 1;
+    string phone = 2;
+    string service = 3;
+    string name = 4;
+    bool isPined = 5;
+  }
+  string message = 1;
+  Phone data = 2;
+}

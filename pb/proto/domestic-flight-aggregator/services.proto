@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package haf80.api.domesticflight.aggregator;
+
+option go_package = "micro/api/pb/domesticflight/aggregator";
+
+import "google/api/annotations.proto";
+import "domestic-flight-aggregator/messages.proto";
+// import "google/protobuf/empty.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/domestic-flight-aggregator";
+};
+
+service Flight {
+  rpc PrepareFlightList (PrepareFlightListRequest) returns (PrepareFlightListResponse) {
+    option (google.api.http) = {
+      post: "/v1/domesticflights/prepare"
+      body: "*"
+    };
+  }
+
+  rpc FlightList(FlightListRequest) returns (FlightListResponse) {
+    option (google.api.http) = {
+      get: "/v1/domesticflights"
+    };
+  }
+
+  // rpc FlightDetail(FlightDetailRequest) returns (FlightDetailResponse) {
+  //   option (google.api.http) = {
+  //     get: "/v1/domesticflights/{flightID}"
+  //   };
+  // }
+
+  rpc Airports(AirportSearchRequest) returns (AirportSearchResponse) {
+    option (google.api.http) = {
+      get: "/v1/airports"
+    };
+  } 
+}

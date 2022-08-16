@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package haf80.api.tourism.flightprovider;
+
+import "tourism/flight-provider/name.proto";
+
+option go_package = "tourism/api/pb/flightprovider";
+
+message ConfirmOrderRequest {
+  string order_id = 1;
+}
+
+message ConfirmOrderResponse {
+  string order_id = 1;
+  string tracking_id = 2;
+  repeated IssuedFlight flights = 3;
+  OrderStatus order_status = 4;
+}
+
+enum OrderStatus {
+  ORDERSTATUS_SUCCESSFUL = 0;
+  ORDERSTATUS_PENDING = 1;
+  ORDERSTATUS_FAILED =2;
+}
+
+message IssuedFlight {
+  string pnr = 1;
+  repeated IssuedTicket tickets = 2;
+}
+
+message IssuedTicket {
+  string ticket_number = 1;
+  Name first_name = 2;
+  Name last_name = 3;
+  string national_code = 4;
+  string passport_number = 5;
+  int64 issue_date = 6;
+}

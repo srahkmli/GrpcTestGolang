@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package haf80.api.passenger;
+
+option go_package = "passenger/api/pb/passenger;passenger";
+
+enum PassengerType {
+  PASSENGER_TYPE_UNDEFINED = 0;
+  PASSENGER_TYPE_NATIONAL_CARD = 1;
+  PASSENGER_TYPE_PASSPORT = 2;
+  PASSENGER_TYPE_BOTH = 3;
+}
+
+enum GenderType {
+  GENDER_TYPE_UNDEFINED = 0;
+  GENDER_TYPE_FEMALE = 1;
+  GENDER_TYPE_MALE = 2;
+  Gender_TYPE_RATHER_NOT_SAY = 3;
+}
+
+enum AgeType {
+  AGE_TYPE_UNDEFINED = 0;
+  AGE_TYPE_ADULT = 1;
+  AGE_TYPE_CHILD = 2;
+  AGE_TYPE_INFANT = 3;
+}
+
+message PassengerListResponse {
+  repeated PassengerModel passenger_list = 1;
+}
+
+message PassengerModel {
+  string id = 17;
+  string persian_name = 1;
+  string persian_family = 2;
+  string english_name = 3;
+  string english_family = 4;
+  string national_id = 5;
+  string birthday = 6;
+  string passport_id = 7;
+  string passport_expire_date = 8;
+  string passport_country = 9;
+  string passport_creation_date = 10;
+  string phone_number = 11;
+  string email = 12;
+  string nationality = 13;
+  GenderType gender = 14;
+  AgeType age_type = 15;
+  PassengerType passenger_type = 16;
+}
+
+message PassengerId {
+  string id = 1;
+}
+
+message PassengerErrorResponse {
+  string field = 1 ;
+  string message = 2 ;
+}

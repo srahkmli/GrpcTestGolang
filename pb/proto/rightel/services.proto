@@ -1,0 +1,227 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "pb/;pb";
+
+// import "google/api/httpbody.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/rightel";
+};
+
+// Admin service
+service Admin {
+    // health 
+    rpc UpdateHealth (HealthUpdateRequest) returns (HealthUpdateResponse) {
+      option (google.api.http) = {
+        patch: "/v1/admin/health"
+        body: "*"
+      };
+    }
+    // balance
+    rpc GetBalance (BalanceRequest) returns (BalanceResponse) {
+      option (google.api.http) = {
+        get: "/v1/admin/balance"
+      };
+    }
+    rpc GetCurrentBalance (google.protobuf.Empty) returns (CurrentBalanceResponse) {
+      option (google.api.http) = {
+        get: "/v1/admin/balance/current"
+      };
+    }
+    // Get the all errors
+    rpc GetErrors (google.protobuf.Empty) returns (ErrorListResponse) {
+      option (google.api.http) = {
+        get: "/v1/admin/error/list"
+      };
+    }
+    // update the error for specific user ID
+    rpc UpdateError (Error) returns (ErrorUpdateResponse) {
+      option (google.api.http) = {
+        post: "/v1/admin/error/update"
+        body: "*"
+      };
+    }
+    // Create the error for specific user ID
+    rpc CreateError (CreateErrorRequest) returns (ErrorCreateResponse) {
+      option (google.api.http) = {
+        post: "/v1/admin/error/create"
+        body: "*"
+      };
+    }
+}
+
+// Here is the overall greeting service definition where we define all our endpoints
+service Charge {
+  // Sends a greeting
+  rpc Charge (ChargeRequest) returns (ChargeResponse) {
+    option (google.api.http) = {
+      post: "/v1/charge/get"
+      body: "*"
+    };
+  }
+  rpc GetStatus (GetStatusRequest) returns (GetStatusResponse){
+    option (google.api.http) = {
+      get: "/v1/charge/get-status"
+    };
+  }
+}
+
+service Package {
+  // Sends a greeting
+  rpc Package (PackageRequest) returns (PackageResponse) {
+    option (google.api.http) = {
+      post: "/v1/package/get"
+      body: "*"
+    };
+  }
+  rpc GetStatus (GetStatusRequest) returns (GetStatusResponse){
+    option (google.api.http) = {
+      get: "/v1/package/get-status"
+    };
+  }
+}
+
+// ChargeRequest for charge phone number
+// we want a token in header
+message HealthUpdateRequest {
+  string service = 1; // service to update
+  enum statusEnum {
+    disable = 0;
+    enable = 1;
+  };
+  statusEnum status = 2;
+}
+
+// ChargeResponse, response for charged phone number
+message HealthUpdateResponse {
+  string message = 2; // response message
+}
+
+message BalanceRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message BalanceResponse {
+  message Balance {
+    string createdAt = 1;
+    int64 balance = 2;
+  }
+  repeated Balance data = 1;
+}
+
+// CurrentBalanceResponse response for get charge balance
+message CurrentBalanceResponse {
+int64 balance = 1; // reponse balance
+}
+
+message ErrorListRequest{}
+
+message ErrorListResponse {
+uint32 code = 1;
+repeated Error data = 2;
+}
+message ErrorUpdateResponse {
+uint32 code = 1;
+string message = 2;
+}
+message ErrorCreateResponse{
+uint32 code = 1;
+string message = 2;
+}
+
+
+message Error {
+int32  id = 1;
+string message = 2;
+string lang = 3;
+uint32 httpCode = 4;
+int32  code = 5;
+uint32 serviceCode = 6;
+string status = 7;
+}
+
+message CreateErrorRequest {
+string message = 1;
+string lang = 2;
+uint32 httpCode = 3;
+int32  code = 4;
+uint32 serviceCode = 5;
+string status = 6;
+}
+
+// ChargeRequest for charge phone number
+// we want a token in header
+message ChargeRequest {
+string service = 1; // service name ->  irancell, mci,...
+string dialer = 2;  // Dialer number -> requested the charge
+string phone = 3;   // Phone number -> requested for charge
+string rrn = 4;     // bank rrn code
+uint32 price = 5;   // price
+string method = 6;  // methods like Normal charge,Custom charging...
+string data = 7;    // if this order needs custom data
+string message = 8; // custom message
+}
+
+// ChargeResponse, response for charged phone number
+message ChargeResponse {
+string message = 1; // response message
+string tid = 2;     // code for charge tracking
+string pin = 3;     // if user want a pin code
+string serial = 4;  // serial number for every charge response 
+string data = 5;    // if provider has more data
+}
+
+// PackageRequest for get a package
+message PackageRequest {
+  uint32 packageId = 1;
+  string dialer = 2;
+  string phone = 3;
+  string rrn = 4;
+  string data = 5;
+  string message = 6;
+}
+
+message PackageResponse {
+  string message = 1;
+  string tid = 2;
+  string data = 3;
+}
+
+message GetProductRequest  {}
+
+message GetProductResponse {
+message PinMessage {
+  string price = 1;
+  string available = 2;
+  string cid = 3;
+  string persiantitle = 4;
+  string englishtitle = 5;
+}
+message NameMessage {
+  string lang = 1;
+  string name = 2;
+}
+message OperatorMessage {
+  string oid = 1;
+  repeated PinMessage pin = 2;
+  repeated NameMessage name = 3;
+}
+repeated OperatorMessage data = 1;
+}
+
+message GetStatusRequest {
+string tid = 1;
+}
+
+message GetStatusResponse {
+int32 status = 1;
+string message = 2;
+string serial = 3;
+}

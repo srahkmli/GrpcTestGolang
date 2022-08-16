@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package haf80.api.bill;
+
+option go_package = "micro/pb/proto/bill;bill";
+
+
+message PaymentOrder {
+    message Payload {
+      string orderId = 1;
+      string userId = 2;
+      string paymentId = 3;
+      uint32 serviceId = 4;
+      uint32 price = 5;
+      string rrn = 6;
+    }
+    message StepStatus {
+      string payment = 1;
+      string service = 2;
+    }
+    string id = 1;
+    string currentStep = 2;
+    Payload payload = 3;
+    string status = 4;
+    StepStatus stepStatus = 5;
+    string type = 6;
+    int32 version = 7;
+    map<string, string> data = 8;
+}
+  
+service PaymentComplete {
+    rpc OrderComplete (haf80.api.bill.PaymentOrder) returns (haf80.api.bill.PaymentOrder) {};
+  }
+  

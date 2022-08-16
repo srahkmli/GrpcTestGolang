@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package haf80.api.providerwrapperdomestic.reserve;
+
+option go_package = "providerwrapperdomestic/api/pb/providerwrapperdomestic/reserve;reserve";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  base_path: "/providerwrapperdomestic";
+};
+
+service Reserve {
+
+  rpc ReserveFlight (FlightReserveRequest) returns (FlightReserveResponse) {
+    option (google.api.http) = {
+      post:"/v1/flight/reserve"
+      body:"*"
+    };
+  }
+
+}
+
+message FlightReserveRequest {
+  message Itinerary {
+    string ticketId = 1;
+  }
+  uint32 adultCount = 2;
+  uint32 childCount = 3;
+  uint32 infantCount = 4;
+  repeated Itinerary Itineraries = 5;
+}
+
+message FlightReserveResponse {
+  message Payment {
+    uint32 Price = 1;
+    uint32 Discount = 3;
+    uint32 Tax = 5;
+  }
+
+  message Tarrif {
+    string Name = 1;
+    bool IsSelectable = 2;
+    bool RequireUserConfirm = 3;
+    Payment Payment = 4;
+  }
+
+  message Fares {
+    uint32 PersonType = 1;
+    repeated Tarrif Tarrif = 2;
+  }
+
+  message Route {
+    string Code = 1;
+    string Name = 2;
+    string DateTime = 3;
+    string City = 4;
+  }
+
+  message TripInfo {
+    Route Departure = 1;
+    Route Arrival = 2;
+  }
+
+  message Groups {
+    TripInfo TripInfo = 1;
+    string GroupToken = 2;
+  }
+
+  message Itineraries {
+    string ServiceKey = 1;
+    repeated Fares Fares = 2;
+    repeated Groups Groups = 3;
+  }
+
+  message FlightReserveItem {
+    string RequestToken = 1;
+    string ReserveKey = 2;
+    string ExpireDate = 3;
+    repeated Itineraries Itineraries = 4;
+  }
+
+  FlightReserveItem Item = 1;
+}

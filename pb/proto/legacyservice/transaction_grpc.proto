@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package TransactionRepo;
+
+
+option go_package = "/TransactionRepo";
+
+service TransactionRepo {
+  rpc InsertTransaction(InsertTransactionRequest) returns (InsertTransactionResponse) {}
+}
+
+message InsertTransactionRequest {
+  string mobile_no = 1;
+  string card_hash = 2;
+  string fld48 = 3;
+  int32 lang_id = 4;
+  int32 msg_type = 5;
+  string pr_code = 6;
+  int64 amount = 7;
+  string term_no = 8;
+  string term_acc_no = 9;
+  int32 trace_no = 10;
+  string rrn = 11;
+  string resp_code = 12;
+  int32 last_txn_type = 13;
+  string add_data = 14;
+  string issuer = 15;
+  uint32 sender_id = 16;
+  uint64 award_points = 17;
+  int32 adv_id = 18;
+  string user_pure_data = 19;
+  string e_type = 20;
+  int64 elapsed_time = 21;
+}
+
+message InsertTransactionResponse {
+  string adv_out = 1;
+}

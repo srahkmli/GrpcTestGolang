@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "base/service.proto",
+    "title": "product/service.proto",
     "version": "version not set"
   },
   "tags": [
@@ -9,7 +9,7 @@
       "name": "SampleAPI"
     }
   ],
-  "basePath": "/base",
+  "basePath": "/product",
   "consumes": [
     "application/json"
   ],
@@ -17,14 +17,14 @@
     "application/json"
   ],
   "paths": {
-    "/v1/sample/{userID}": {
+    "/v1/sample/{name}": {
       "post": {
         "operationId": "SampleAPI_SampleEndpoint",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apibaseSampleResponse"
+              "$ref": "#/definitions/apiproductSampleResponse"
             }
           },
           "default": {
@@ -36,7 +36,7 @@
         },
         "parameters": [
           {
-            "name": "userID",
+            "name": "name",
             "in": "path",
             "required": true,
             "type": "string"
@@ -48,7 +48,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "data": {
+                "qty": {
                   "type": "integer",
                   "format": "int32"
                 }
@@ -63,7 +63,7 @@
     }
   },
   "definitions": {
-    "apibaseSampleResponse": {
+    "apiproductSampleResponse": {
       "type": "object",
       "properties": {
         "data": {

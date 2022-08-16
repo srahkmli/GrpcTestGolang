@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"log"
 	"micro/api/pb/base"
+	"micro/api/pb/product"
 	"micro/app/server/middleware"
 	"micro/client/jtrace"
 	"micro/config"
 	controller "micro/controller/base"
+	controller2 "micro/controller/product"
 	"micro/controller/rest"
 	"net"
 	"net/http"
@@ -34,8 +36,8 @@ type server struct {
 }
 
 type ControllerContainer struct {
-	BaseController controller.BaseController
-
+	BaseController    controller.BaseController
+	ProductController controller2.ProductController
 	fx.In
 }
 
@@ -49,6 +51,7 @@ func New(cc ControllerContainer) (IServer, error) {
 func (s *server) setupGrpcServer(cc ControllerContainer) {
 	s.grpcServer = grpc.NewServer(s.ServerOptions()...)
 	base.RegisterSampleAPIServer(s.grpcServer, &cc.BaseController)
+	product.RegisterSampleAPIServer(s.grpcServer, &cc.ProductController)
 	reflection.Register(s.grpcServer)
 }
 
@@ -149,6 +152,9 @@ func (s *server) GatewayServer(ctx context.Context, conn *grpc.ClientConn) (*htt
 	if err := base.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
 		return nil, err
 	}
+	//	if err := product.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
+	//		return nil, err
+	//	}
 
 	// handle methods
 	mux := http.NewServeMux()

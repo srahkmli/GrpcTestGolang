@@ -29,7 +29,8 @@ proto:
 	--go-grpc_out api/pb \
 	--go-grpc_opt paths=source_relative \
 	--grpc-gateway_out api/pb \
-	--grpc-gateway_opt paths=source_relative pb/proto/base/*.proto
+	--grpc-gateway_opt paths=source_relative pb/proto/base/*.proto \
+	--grpc-gateway_opt paths=source_relative pb/proto/product/*.proto
 
 .PHONY: build
 build:

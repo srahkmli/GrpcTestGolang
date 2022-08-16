@@ -1,11 +1,12 @@
 package controller
 
 import (
-	controller "micro/controller/base"
-
 	"go.uber.org/fx"
+	controller "micro/controller/base"
+	productController "micro/controller/product"
 )
 
 var Module = fx.Options(
 	fx.Provide(controller.NewBaseController),
+	fx.Provide(productController.NewProductController),
 )

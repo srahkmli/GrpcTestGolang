@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package haf80.api.product;
+
+option go_package = "micro/api/pb/product";
+
+message SampleRequest {
+    string name = 1;
+    int32 qty = 2;
+}
+
+message SampleResponse {
+    string data = 1;
+}

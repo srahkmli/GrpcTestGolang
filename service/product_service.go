@@ -4,16 +4,16 @@ import (
 	"context"
 	"fmt"
 	"go.uber.org/zap"
-	redicontract "micro/client/redis"
+	"log"
+	"micro/client/jtrace"
 	"micro/model"
 	repocontract "micro/repository_contract"
 	"regexp"
-	"time"
 )
 
 type ProductService struct {
 	productRepo repocontract.IProductRepository
-	redis       redicontract.Store
+	cacheKey    string
 }
 
 func (p ProductService) Validate(name string) bool {
@@ -21,34 +21,44 @@ func (p ProductService) Validate(name string) bool {
 	return isAlpha(name)
 }
 
-func NewProductService(repo repocontract.IProductRepository, store redicontract.Store) ProductService {
+func NewProductService(repo repocontract.IProductRepository) ProductService {
 	return ProductService{
 		productRepo: repo,
-		redis:       store,
+		cacheKey:    "",
 	}
 }
 
-func (p ProductService) Process(ctx context.Context, m model.ProductModel) (model.PurchaseModel, error) {
+func (p ProductService) SetProcess(ctx context.Context, m model.ProductModel) (model.PurchaseModel, error) {
+	span, ctx := jtrace.T().SpanFromContext(ctx, "srvis[SetProcess]")
+	defer span.Finish()
+
 	var result model.PurchaseModel
-	var cacheKey = fmt.Sprintf("%s - %d", m.Name, m.Qty)
-
-	if err := p.redis.Get(context.Background(), cacheKey, result); err == nil {
-		return result, nil
-	}
-	zap.L().Debug("redis get ok")
-	if err := p.productRepo.StoreProductModel(m); err != nil {
+	err := p.productRepo.StoreProductModel(ctx, m)
+	if err != nil {
 		return result, err
 	}
+
 	zap.L().Debug("stored ok")
-	if err := p.redis.Set(context.Background(), cacheKey, result, time.Duration(3*time.Now().Day())); err != nil {
-		zap.L().Error(err.Error())
-		return result, nil
-	}
-	zap.L().Debug("redis set ok")
-	result.Data = fmt.Sprintf("you purchased a  %s - %d", m.Name, m.Qty)
-
-	if err := p.productRepo.NotifyPurchase(result); err != nil {
+	resProduct, err := p.productRepo.NotifyPurchase(ctx, m)
+	if err != nil {
 		return result, err
 	}
+
+	result.Data = resProduct.Name
+	return result, nil
+}
+
+func (p ProductService) GetProcess(ctx context.Context, m model.PointModel) (model.PurchaseModel, error) {
+	span, ctx := jtrace.T().SpanFromContext(ctx, "service[GetProcess]")
+	defer span.Finish()
+	log.Printf("current chachKey is %v ", p.cacheKey)
+	res, cacheKey, err := p.productRepo.GetProductModel(ctx, m, p.cacheKey)
+	if err != nil {
+		return model.PurchaseModel{}, err
+	}
+	p.cacheKey = cacheKey
+
+	log.Printf("update chachKey is %v ", p.cacheKey)
+	result := model.PurchaseModel{Data: fmt.Sprintf("%s - %d", res.Name, res.Name)}
 	return result, nil
 }

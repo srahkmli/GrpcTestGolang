@@ -151,9 +151,9 @@ func (s *server) GatewayServer(ctx context.Context, conn *grpc.ClientConn) (*htt
 	}))
 
 	// register handler
-	//if err := base.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
-	//	return nil, err
-	//}
+	if err := base.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
+		return nil, err
+	}
 	if err := product.RegisterSampleAPIHandler(ctx, gwmux, conn); err != nil {
 		return nil, err
 	}

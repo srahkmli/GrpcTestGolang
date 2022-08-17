@@ -6,6 +6,16 @@ import (
 )
 
 func init() {
+
+	//log.Println("migration init called")
+	//migrations.MustRegisterTx(func(db migrations.DB) error {
+	//	err := db.Model(&model.ProductModel{}).CreateTable(nil)
+	//	if err != nil {
+	//		log.Println(err)
+	//		return err
+	//	}
+	//	return nil
+	//})
 	migrations.MustRegisterTx(
 		func(db migrations.DB) error {
 			fmt.Println("creating table product...")

@@ -20,8 +20,8 @@ func NewProductController(service servicecontract.IProductService) ProductContro
 	}
 }
 
-func (b *ProductController) SampleEndpoint(c context.Context, req *product.SampleRequest) (*product.SampleResponse, error) {
-	span, _ := jtrace.T().SpanFromContext(c, "controller")
+func (b *ProductController) SampleEndpointSet(c context.Context, req *product.SampleRequest) (*product.SampleResponse, error) {
+	span, c := jtrace.T().SpanFromContext(c, "controller")
 	defer span.Finish()
 	zap.L().Info("an info level log")
 	//if ok, violations := ValidateSampleRequest(req); !ok {
@@ -35,13 +35,23 @@ func (b *ProductController) SampleEndpoint(c context.Context, req *product.Sampl
 	zap.L().Debug("a debug level log")
 
 	reqModel := SampleRequestToProduct(req)
-
-	resModel, err := b.productService.Process(c, reqModel)
-	zap.L().Debug("last log")
-
+	resModel, err := b.productService.SetProcess(c, reqModel)
 	if err != nil {
 		return nil, err
 	}
+	zap.L().Debug("last log")
+	return PurchaseToSampleResponse(resModel), nil
+}
+func (b *ProductController) SampleEndpointGet(c context.Context, req *product.SamplePoint) (*product.SampleResponse, error) {
+	span, c := jtrace.T().SpanFromContext(c, "controller")
+	defer span.Finish()
+	zap.L().Info("an info level log")
 
+	reqModel := SampleRequestPoint(req)
+	resModel, err := b.productService.GetProcess(c, reqModel)
+	if err != nil {
+		return nil, err
+	}
+	zap.L().Debug("last log")
 	return PurchaseToSampleResponse(resModel), nil
 }

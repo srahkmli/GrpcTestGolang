@@ -11,6 +11,11 @@ func SampleRequestToProduct(r *product.SampleRequest) model.ProductModel {
 		Qty:  r.GetQty(),
 	}
 }
+func SampleRequestPoint(r *product.SamplePoint) model.PointModel {
+	return model.PointModel{
+		Point: r.GetPoint(),
+	}
+}
 
 func PurchaseToSampleResponse(m model.PurchaseModel) *product.SampleResponse {
 	return &product.SampleResponse{

@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SampleAPIClient interface {
-	SampleEndpoint(ctx context.Context, in *SampleRequest, opts ...grpc.CallOption) (*SampleResponse, error)
+	SampleEndpointSet(ctx context.Context, in *SampleRequest, opts ...grpc.CallOption) (*SampleResponse, error)
+	SampleEndpointGet(ctx context.Context, in *SamplePoint, opts ...grpc.CallOption) (*SampleResponse, error)
 }
 
 type sampleAPIClient struct {
@@ -33,9 +34,18 @@ func NewSampleAPIClient(cc grpc.ClientConnInterface) SampleAPIClient {
 	return &sampleAPIClient{cc}
 }
 
-func (c *sampleAPIClient) SampleEndpoint(ctx context.Context, in *SampleRequest, opts ...grpc.CallOption) (*SampleResponse, error) {
+func (c *sampleAPIClient) SampleEndpointSet(ctx context.Context, in *SampleRequest, opts ...grpc.CallOption) (*SampleResponse, error) {
 	out := new(SampleResponse)
-	err := c.cc.Invoke(ctx, "/haf80.api.product.SampleAPI/SampleEndpoint", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/haf80.api.product.SampleAPI/SampleEndpointSet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sampleAPIClient) SampleEndpointGet(ctx context.Context, in *SamplePoint, opts ...grpc.CallOption) (*SampleResponse, error) {
+	out := new(SampleResponse)
+	err := c.cc.Invoke(ctx, "/haf80.api.product.SampleAPI/SampleEndpointGet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +56,8 @@ func (c *sampleAPIClient) SampleEndpoint(ctx context.Context, in *SampleRequest,
 // All implementations must embed UnimplementedSampleAPIServer
 // for forward compatibility
 type SampleAPIServer interface {
-	SampleEndpoint(context.Context, *SampleRequest) (*SampleResponse, error)
+	SampleEndpointSet(context.Context, *SampleRequest) (*SampleResponse, error)
+	SampleEndpointGet(context.Context, *SamplePoint) (*SampleResponse, error)
 	mustEmbedUnimplementedSampleAPIServer()
 }
 
@@ -54,8 +65,11 @@ type SampleAPIServer interface {
 type UnimplementedSampleAPIServer struct {
 }
 
-func (UnimplementedSampleAPIServer) SampleEndpoint(context.Context, *SampleRequest) (*SampleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SampleEndpoint not implemented")
+func (UnimplementedSampleAPIServer) SampleEndpointSet(context.Context, *SampleRequest) (*SampleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SampleEndpointSet not implemented")
+}
+func (UnimplementedSampleAPIServer) SampleEndpointGet(context.Context, *SamplePoint) (*SampleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SampleEndpointGet not implemented")
 }
 func (UnimplementedSampleAPIServer) mustEmbedUnimplementedSampleAPIServer() {}
 
@@ -70,20 +84,38 @@ func RegisterSampleAPIServer(s grpc.ServiceRegistrar, srv SampleAPIServer) {
 	s.RegisterService(&SampleAPI_ServiceDesc, srv)
 }
 
-func _SampleAPI_SampleEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SampleAPI_SampleEndpointSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SampleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SampleAPIServer).SampleEndpoint(ctx, in)
+		return srv.(SampleAPIServer).SampleEndpointSet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/haf80.api.product.SampleAPI/SampleEndpoint",
+		FullMethod: "/haf80.api.product.SampleAPI/SampleEndpointSet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SampleAPIServer).SampleEndpoint(ctx, req.(*SampleRequest))
+		return srv.(SampleAPIServer).SampleEndpointSet(ctx, req.(*SampleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SampleAPI_SampleEndpointGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SamplePoint)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SampleAPIServer).SampleEndpointGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/haf80.api.product.SampleAPI/SampleEndpointGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SampleAPIServer).SampleEndpointGet(ctx, req.(*SamplePoint))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +128,12 @@ var SampleAPI_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*SampleAPIServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SampleEndpoint",
-			Handler:    _SampleAPI_SampleEndpoint_Handler,
+			MethodName: "SampleEndpointSet",
+			Handler:    _SampleAPI_SampleEndpointSet_Handler,
+		},
+		{
+			MethodName: "SampleEndpointGet",
+			Handler:    _SampleAPI_SampleEndpointGet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

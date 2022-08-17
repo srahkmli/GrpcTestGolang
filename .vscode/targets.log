@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue Aug 16 17:44:27 2022
+# Make data base, printed on Wed Aug 17 14:54:55 2022
 
 # Variables
 
@@ -65,7 +65,7 @@ VSCODE_CODE_CACHE_PATH = /home/srahkmli/.config/Code/CachedData/6d9b74a70ca9c773
 # environment
 LANG = C
 # environment
-XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.LGO4Q1
+XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.JCTSQ1
 # default
 .LOADED := 
 # default
@@ -103,7 +103,7 @@ MAKEFILE_LIST := Makefile
 # environment
 ZSH = /home/srahkmli/.oh-my-zsh
 # environment
-VSCODE_PID = 114844
+VSCODE_PID = 59077
 # environment
 XDG_SESSION_TYPE = wayland
 # automatic
@@ -111,7 +111,7 @@ XDG_SESSION_TYPE = wayland
 # environment
 CLION_VM_OPTIONS = /home/srahkmli/Downloads/ja-netfilter-v2022.2.0/ja-netfilter/vmoptions/clion.vmoptions
 # environment
-SESSION_MANAGER = local/katana:@/tmp/.ICE-unix/3498,unix/katana:/tmp/.ICE-unix/3498
+SESSION_MANAGER = local/katana:@/tmp/.ICE-unix/3587,unix/katana:/tmp/.ICE-unix/3587
 # automatic
 *F = $(notdir $*)
 # environment
@@ -165,7 +165,7 @@ RIDER_VM_OPTIONS = /home/srahkmli/Downloads/ja-netfilter-v2022.2.0/ja-netfilter/
 # environment
 IDEA_VM_OPTIONS = /home/srahkmli/Downloads/ja-netfilter-v2022.2.0/ja-netfilter/vmoptions/idea.vmoptions
 # environment
-INVOCATION_ID = 1e8b396032bf424dab163c3bb05a370d
+INVOCATION_ID = 417a4a400bc54c12a5018f713ef56123
 # environment
 USERNAME = srahkmli
 # environment
@@ -201,7 +201,7 @@ GIO_LAUNCHED_DESKTOP_FILE = /usr/share/applications/code.desktop
 # makefile
 .DEFAULT_GOAL := init
 # environment
-SYSTEMD_EXEC_PID = 3516
+SYSTEMD_EXEC_PID = 3605
 # environment
 DISPLAY = :0
 # environment
@@ -213,11 +213,11 @@ MAKE_VERSION := 4.3
 # 'override' directive
 .SHELLSTATUS := 0
 # environment
-MANAGERPID = 3380
+MANAGERPID = 3468
 # environment
 LC_MEASUREMENT = en_US.UTF-8
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 114844
+GIO_LAUNCHED_DESKTOP_FILE_PID = 59077
 # environment
 PAGER = less
 # environment
@@ -229,7 +229,7 @@ LC_PAPER = en_US.UTF-8
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
-JOURNAL_STREAM = 8:46108
+JOURNAL_STREAM = 8:37513
 # environment
 GOMODCACHE = /home/srahkmli/go/pkg/mod
 # environment
@@ -273,18 +273,18 @@ LC_IDENTIFICATION = en_US.UTF-8
 
 # Directories
 
-# . (device 2050, inode 3188255): 33 files, no impossibilities.
+# . (device 2050, inode 3188255): 32 files, no impossibilities.
 
-# 33 files, no impossibilities in 1 directories.
+# 32 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
 # No implicit rules.
 
- 
 # Files
 
 proto:
+ 
 #  Phony target (prerequisite of .PHONY).
 #  Implicit rule search has not been done.
 #  File does not exist.
@@ -404,12 +404,12 @@ test:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 46 / storage = 405 B / avg = 8 B
-# current buf: size = 8162 B / used = 405 B / count = 46 / avg = 8 B
+# strcache buffers: 1 (0) / strings = 45 / storage = 401 B / avg = 8 B
+# current buf: size = 8162 B / used = 401 B / count = 45 / avg = 8 B
 
-# strcache performance: lookups = 82 / hit rate = 43%
+# strcache performance: lookups = 81 / hit rate = 44%
 # hash-table stats:
-# Load=46/8192=1%, Rehash=0, Collisions=0/82=0%
-# Finished Make data base on Tue Aug 16 17:44:27 2022
+# Load=45/8192=1%, Rehash=0, Collisions=0/81=0%
+# Finished Make data base on Wed Aug 17 14:54:55 2022
 
  

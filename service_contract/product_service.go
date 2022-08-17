@@ -7,5 +7,6 @@ import (
 
 type IProductService interface {
 	Validate(string) bool
-	Process(context.Context, model.ProductModel) (model.PurchaseModel, error)
+	SetProcess(context.Context, model.ProductModel) (model.PurchaseModel, error)
+	GetProcess(context.Context, model.PointModel) (model.PurchaseModel, error)
 }

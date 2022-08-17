@@ -1,8 +1,12 @@
 package repocontract
 
-import "micro/model"
+import (
+	"context"
+	"micro/model"
+)
 
 type IProductRepository interface {
-	StoreProductModel(model.ProductModel) error
-	NotifyPurchase(model.PurchaseModel) error
+	StoreProductModel(context.Context, model.ProductModel) error
+	NotifyPurchase(context.Context, model.ProductModel) (model.ProductModel, error)
+	GetProductModel(context.Context, model.PointModel, string) (model.ProductModel, string, error)
 }

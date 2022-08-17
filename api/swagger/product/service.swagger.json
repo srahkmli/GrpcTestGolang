@@ -17,9 +17,41 @@
     "application/json"
   ],
   "paths": {
-    "/v1/sample/add": {
+    "/get": {
       "post": {
-        "operationId": "SampleAPI_SampleEndpoint",
+        "operationId": "SampleAPI_SampleEndpointGet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiproductSampleResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/productSamplePoint"
+            }
+          }
+        ],
+        "tags": [
+          "SampleAPI"
+        ]
+      }
+    },
+    "/set": {
+      "post": {
+        "operationId": "SampleAPI_SampleEndpointSet",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -67,6 +99,14 @@
       "type": "object",
       "properties": {
         "data": {
+          "type": "string"
+        }
+      }
+    },
+    "productSamplePoint": {
+      "type": "object",
+      "properties": {
+        "point": {
           "type": "string"
         }
       }

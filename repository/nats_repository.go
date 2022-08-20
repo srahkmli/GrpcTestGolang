@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/go-pg/pg/v10"
 	"go.uber.org/fx"
-	"log"
 	"micro/client/broker"
 	"micro/client/jtrace"
 	"micro/client/redis"
@@ -35,17 +34,12 @@ func NewNatsRepository(params NatsRepositoryParams) repocontract.INatsRepository
 	}
 }
 
-func (n *NatsRepository) StoreProductModel(ctx context.Context, product model.ProductModel) error {
+func (n *NatsRepository) StoreProductModel(ctx context.Context) error {
 	span, _ := jtrace.T().SpanFromContext(ctx, "NatsRepo[StoreProduct]")
 	defer span.Finish()
 
 	subject := "StoreProduct"
-	_, err := n.db.Model(&product).Insert()
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-	if err := n.nats.Publish(ctx, subject, product); err != nil {
+	if err := n.nats.Publish(ctx, subject, "INSERT"); err != nil {
 		return fmt.Errorf("publishing on nats failed: %w", err)
 	}
 	return nil

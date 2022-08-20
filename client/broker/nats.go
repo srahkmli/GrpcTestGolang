@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"micro/config"
+	"micro/model"
 	"time"
 
 	nats "github.com/nats-io/nats.go"
@@ -110,7 +111,7 @@ func (n *nts) RequestWithReply(subject string, req interface{}, resp string) err
 }
 
 // Subscribe, start to subscribe to a subject
-func (n *nts) Subscribe(subject string, callBack func(resp *nats.Msg)) (*nats.Subscription, error) {
+func (n *nts) Subscribe(subject string, callBack func(product *model.ProductModel)) (*nats.Subscription, error) {
 	sub, err := n.Encoded().Subscribe(subject, callBack)
 	if err != nil {
 		zap.L().Info("msg", zap.String("err", err.Error()))

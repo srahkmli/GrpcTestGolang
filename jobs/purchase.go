@@ -2,18 +2,27 @@ package jobs
 
 import (
 	"context"
-	"github.com/nats-io/nats.go"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"micro/client/broker"
+	"micro/model"
+	servicecontract "micro/service_contract"
 )
 
-func StoreProductListener(lc fx.Lifecycle, Broker broker.NatsBroker) {
+type StoreProductListenerParams struct {
+	fx.In
+	ProductService servicecontract.IProductService
+}
+
+func InitProductListener(lc fx.Lifecycle, Broker broker.NatsBroker, param StoreProductListenerParams) {
+	param.StoreProductListener(lc, Broker)
+}
+func (p *StoreProductListenerParams) StoreProductListener(lc fx.Lifecycle, Broker broker.NatsBroker) {
 	subject := "StoreProduct"
 	lc.Append(fx.Hook{OnStart: func(ctx context.Context) error {
-		Broker.Subscribe(subject, func(resp *nats.Msg) {
+		Broker.Subscribe(subject, func(product *model.ProductModel) {
 			zap.L().Info("I received a message")
-			resp.Respond([]byte("message received"))
+			p.ProductService.SetProcess(ctx, *product)
 		})
 		return nil
 	}})

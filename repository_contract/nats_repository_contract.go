@@ -6,6 +6,6 @@ import (
 )
 
 type INatsRepository interface {
-	StoreProductModel(context.Context, model.ProductModel) error
+	StoreProductModel(context.Context) error
 	ReturnPurchaseModel(context.Context, model.PointModel) (model.ProductModel, error)
 }

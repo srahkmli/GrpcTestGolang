@@ -50,7 +50,7 @@ func Start() {
 			fx.Invoke(config.InitConfigs),
 			fx.Invoke(logger.InitGlobalLogger),
 			fx.Invoke(jtrace.InitGlobalTracer),
-			fx.Invoke(jobs.StoreProductListener),
+			fx.Invoke(jobs.InitProductListener),
 			fx.Invoke(serve),
 		)
 		startCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

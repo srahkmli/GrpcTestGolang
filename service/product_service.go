@@ -30,11 +30,23 @@ func NewProductService(repo repocontract.IProductRepository, nat repocontract.IN
 	}
 }
 
+func (p ProductService) NatProcess(ctx context.Context) error {
+	span, ctx := jtrace.T().SpanFromContext(ctx, "service[NatProcess]")
+	defer span.Finish()
+
+	err := p.natsRepo.StoreProductModel(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p ProductService) SetProcess(ctx context.Context, product model.ProductModel) error {
 	span, ctx := jtrace.T().SpanFromContext(ctx, "service[SetProcess]")
 	defer span.Finish()
 
-	err := p.natsRepo.StoreProductModel(ctx, product)
+	err := p.dbRepo.InsertModel(ctx, product)
 	if err != nil {
 		return err
 	}

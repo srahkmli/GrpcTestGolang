@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"go.uber.org/zap"
-	"log"
 	"micro/client/jtrace"
 	"micro/model"
 	repocontract "micro/repository_contract"
@@ -13,7 +12,6 @@ import (
 
 type ProductService struct {
 	productRepo repocontract.IProductRepository
-	cacheKey    string
 }
 
 func (p ProductService) Validate(name string) bool {
@@ -24,12 +22,11 @@ func (p ProductService) Validate(name string) bool {
 func NewProductService(repo repocontract.IProductRepository) ProductService {
 	return ProductService{
 		productRepo: repo,
-		cacheKey:    "",
 	}
 }
 
 func (p ProductService) SetProcess(ctx context.Context, m model.ProductModel) (model.PurchaseModel, error) {
-	span, ctx := jtrace.T().SpanFromContext(ctx, "srvis[SetProcess]")
+	span, ctx := jtrace.T().SpanFromContext(ctx, "service[SetProcess]")
 	defer span.Finish()
 
 	var result model.PurchaseModel
@@ -51,14 +48,11 @@ func (p ProductService) SetProcess(ctx context.Context, m model.ProductModel) (m
 func (p ProductService) GetProcess(ctx context.Context, m model.PointModel) (model.PurchaseModel, error) {
 	span, ctx := jtrace.T().SpanFromContext(ctx, "service[GetProcess]")
 	defer span.Finish()
-	log.Printf("current chachKey is %v ", p.cacheKey)
-	res, cacheKey, err := p.productRepo.GetProductModel(ctx, m, p.cacheKey)
+	res, err := p.productRepo.GetProductModel(ctx, m)
 	if err != nil {
 		return model.PurchaseModel{}, err
 	}
-	p.cacheKey = cacheKey
 
-	log.Printf("update chachKey is %v ", p.cacheKey)
-	result := model.PurchaseModel{Data: fmt.Sprintf("%s - %d", res.Name, res.Name)}
+	result := model.PurchaseModel{Data: fmt.Sprintf("%s - %d", res.Name, res.Qty)}
 	return result, nil
 }

@@ -58,30 +58,31 @@ func (b *ProductRepository) NotifyPurchase(ctx context.Context, m model.ProductM
 	return res, b.nats.Publish(ctx, "sample subject", res)
 }
 
-func (b *ProductRepository) GetProductModel(ctx context.Context, m model.PointModel, cacheKey string) (model.ProductModel, string, error) {
+func (b *ProductRepository) GetProductModel(ctx context.Context, m model.PointModel) (model.ProductModel, error) {
 	span, ctx := jtrace.T().SpanFromContext(ctx, "repo[GetProductModel]")
 	defer span.Finish()
 
 	var res model.ProductModel
 	log.Printf("setting redis")
+	cacheKey := config.C().Service.Name + ":" + m.Point
 	err := b.redis.Get(ctx, cacheKey, &res)
 	if err == nil {
 		log.Printf("from redis name is : %s  , qty is %v", res.Name, res.Qty)
-		return res, cacheKey, b.nats.Publish(context.TODO(), "sample subject", res)
+		return res, b.nats.Publish(context.TODO(), "sample subject", res)
 	}
 	log.Printf("redis err : %v", err)
 
 	log.Println("DB Called")
 	if err := b.db.Model(&res).Where("name = ?", m.Point).Select(); err != nil {
 		log.Println(err)
-		return res, "", err
+		return res, err
 	}
 
 	log.Printf("setting redis")
-	cacheKey = config.C().Service.Name + ":" + res.Name
-	if err := b.redis.Set(ctx, cacheKey, &m, time.Minute*90); err != nil {
+
+	if err := b.redis.Set(ctx, cacheKey, &res, time.Minute*90); err != nil {
 		log.Println(err)
-		return res, "", err
+		return res, err
 	}
-	return res, cacheKey, nil
+	return res, nil
 }

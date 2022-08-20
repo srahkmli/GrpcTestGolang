@@ -2,8 +2,10 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	product "micro/api/pb/product"
 	"micro/client/jtrace"
+	"micro/model"
 	servicecontract "micro/service_contract"
 
 	"go.uber.org/zap"
@@ -21,29 +23,22 @@ func NewProductController(service servicecontract.IProductService) ProductContro
 }
 
 func (b *ProductController) SampleEndpointSet(c context.Context, req *product.SampleRequest) (*product.SampleResponse, error) {
-	span, c := jtrace.T().SpanFromContext(c, "controller")
+	span, c := jtrace.T().SpanFromContext(c, "controller[SET]")
 	defer span.Finish()
 	zap.L().Info("an info level log")
-	//if ok, violations := ValidateSampleRequest(req); !ok {
-	//	return nil, gerrors.NewStatus(codes.Aborted).
-	//		WithMessage("invalid name").
-	//		AddBadRequest(violations...).
-	//		AddFarsi("شما در وارد کردن اسم اشتباه کردید").
-	//		MakeError()
-	//}
-
-	zap.L().Debug("a debug level log")
 
 	reqModel := SampleRequestToProduct(req)
-	resModel, err := b.productService.SetProcess(c, reqModel)
+	err := b.productService.SetProcess(c, reqModel)
 	if err != nil {
 		return nil, err
 	}
+
 	zap.L().Debug("last log")
-	return PurchaseToSampleResponse(resModel), nil
+	sr := model.PurchaseModel{Data: fmt.Sprintf("Hello %s - %d", reqModel.Name, reqModel.Qty)}
+	return PurchaseToSampleResponse(sr), nil
 }
 func (b *ProductController) SampleEndpointGet(c context.Context, req *product.SamplePoint) (*product.SampleResponse, error) {
-	span, c := jtrace.T().SpanFromContext(c, "controller")
+	span, c := jtrace.T().SpanFromContext(c, "controller[GET]")
 	defer span.Finish()
 	zap.L().Info("an info level log")
 
@@ -53,5 +48,7 @@ func (b *ProductController) SampleEndpointGet(c context.Context, req *product.Sa
 		return nil, err
 	}
 	zap.L().Debug("last log")
-	return PurchaseToSampleResponse(resModel), nil
+	sr := model.PurchaseModel{Data: fmt.Sprintf("Hello %s - %d", resModel.Name, resModel.Qty)}
+
+	return PurchaseToSampleResponse(sr), nil
 }

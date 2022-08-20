@@ -10,6 +10,7 @@ import (
 	"micro/client/jtrace"
 	"micro/client/postgres"
 	"micro/client/redis"
+	"micro/jobs"
 	"micro/pkg/logger"
 	"os"
 	"time"
@@ -49,6 +50,7 @@ func Start() {
 			fx.Invoke(config.InitConfigs),
 			fx.Invoke(logger.InitGlobalLogger),
 			fx.Invoke(jtrace.InitGlobalTracer),
+			fx.Invoke(jobs.StoreProductListener),
 			fx.Invoke(serve),
 		)
 		startCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
